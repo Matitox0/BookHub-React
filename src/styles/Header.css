@@ -1,0 +1,36 @@
+:root {
+  --azul: #1a4d8f;
+  --azul-oscuro: #0f3560;
+  --azul-claro: #e8f0fb;
+  --negro: #111417;
+  --blanco: #ffffff;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 16px 5%;
+  background-color: var(--negro);
+  border-bottom: 3px solid var(--azul);
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--azul);
+}
+
+header nav a {
+  margin-left: 16px;
+  text-decoration: none;
+  color: var(--blanco);
+  font-weight: 500;
+}
+
+header nav a:hover {
+  color: var(--azul-claro);
+  text-decoration: underline;
+}
