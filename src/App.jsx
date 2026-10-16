@@ -4,41 +4,102 @@ import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
-import Checkout from './pages/Checkout';
-import PaymentSuccess from './pages/PaymentSuccess';
-import { dataService } from './services/dataService';
+
+const LIBROS_INICIALES = [
+  { id: 1, titulo: 'Cien Años de Soledad', autor: 'Gabriel García Márquez', precio: 15000, imagen: '' },
+  { id: 2, titulo: 'La Casa de los Espíritus', autor: 'Isabel Allende', precio: 12000, imagen: '' }
+];
 
 export default function App() {
-  const [libros, setLibros] = useState(() => dataService.obtenerLibros());
-  const [carrito, setCarrito] = useState(() => dataService.obtenerCarrito());
-  const [usuarioLogueado, setUsuarioLogueado] = useState(() => localStorage.getItem('sesionActivaBookHub') || '');
+  // Persistencia de inventario
+  const [libros, setLibros] = useState(() => {
+    const local = localStorage.getItem('inventarioBookHub');
+    return local ? JSON.parse(local) : LIBROS_INICIALES;
+  });
+
+  // Persistencia de carrito
+  const [carrito, setCarrito] = useState(() => {
+    return JSON.parse(localStorage.getItem('carritoBookHub')) || [];
+  });
+
+  // Persistencia de sesión
+  const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
+    return localStorage.getItem('sesionActivaBookHub') || null;
+  });
 
   useEffect(() => {
     localStorage.setItem('inventarioBookHub', JSON.stringify(libros));
   }, [libros]);
 
   useEffect(() => {
-    dataService.guardarCarrito(carrito);
+    localStorage.setItem('carritoBookHub', JSON.stringify(carrito));
   }, [carrito]);
 
-  const agregarAlCarrito = (libro, cantidad) => {
-    const existe = carrito.some(item => item.id === libro.id);
-    if (existe) {
-      setCarrito(carrito.map(item => item.id === libro.id ? { ...item, cantidad: item.cantidad + cantidad } : item));
-    } else {
-      setCarrito([...carrito, { ...libro, cantidad }]);
+  const alAgregarAlCarrito = (libro, cantidad) => {
+    if (isNaN(cantidad) || cantidad < 1) {
+      alert("Por favor, selecciona una cantidad válida.");
+      return;
     }
+
+    const existe = carrito.some((item) => String(item.id) === String(libro.id));
+    let nuevoCarrito;
+
+    if (existe) {
+      nuevoCarrito = carrito.map((item) =>
+        String(item.id) === String(libro.id)
+          ? { ...item, cantidad: item.cantidad + cantidad }
+          : item
+      );
+    } else {
+      nuevoCarrito = [...carrito, { ...libro, cantidad }];
+    }
+
+    setCarrito(nuevoCarrito);
+    alert(`"${libro.titulo}" se agrego a tu carrito de compras.`);
   };
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home libros={libros} alAgregarAlCarrito={agregarAlCarrito} usuarioLogueado={usuarioLogueado} />} />
-        <Route path="/cart" element={<Cart carrito={carrito} setCarrito={setCarrito} usuarioLogueado={usuarioLogueado} />} />
-        <Route path="/checkout" element={<Checkout carrito={carrito} setCarrito={setCarrito} usuarioLogueado={usuarioLogueado} />} />
-        <Route path="/pago-exitoso" element={<PaymentSuccess usuarioLogueado={usuarioLogueado} />} />
-        <Route path="/admin" element={<Admin libros={libros} setLibros={setLibros} usuarioLogueado={usuarioLogueado} />} />
-        <Route path="/login" element={<Login usuarioLogueado={usuarioLogueado} setUsuarioLogueado={setUsuarioLogueado} />} />
+        <Route
+          path="/"
+          element={
+            <Home
+              libros={libros}
+              alAgregarAlCarrito={alAgregarAlCarrito}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <Cart
+              carrito={carrito}
+              setCarrito={setCarrito}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <Admin
+              libros={libros}
+              setLibros={setLibros}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Login
+              usuarioLogueado={usuarioLogueado}
+              setUsuarioLogueado={setUsuarioLogueado}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
