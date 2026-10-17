@@ -3,9 +3,9 @@ import Footer from '../organisms/Footer';
 
 export default function MainLayout({ children, usuarioLogueado }) {
   return (
-    <div className="app-container">
+    <div className="d-flex flex-column min-vh-100">
       <Header usuarioLogueado={usuarioLogueado} />
-      <div className="contenido-principal" style={{ minHeight: '75vh', padding: '0 20px' }}>
+      <div className="flex-grow-1 py-4">
         {children}
       </div>
       <Footer />
