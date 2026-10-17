@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 
 export default function Cart({ carrito, setCarrito, usuarioLogueado }) {
@@ -63,7 +64,7 @@ export default function Cart({ carrito, setCarrito, usuarioLogueado }) {
         </div>
 
         {carrito.length > 0 && (
-          <div style={{ marginTop: '20px', textAlign: 'right' }}>
+          <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
             <button
               id="vaciar-carrito"
               className="boton"
@@ -72,6 +73,14 @@ export default function Cart({ carrito, setCarrito, usuarioLogueado }) {
             >
               Vaciar Carrito
             </button>
+            <Link
+              to="/checkout"
+              id="finalizar-compra"
+              className="boton"
+              style={{ backgroundColor: '#28a745', color: '#fff', textDecoration: 'none', display: 'inline-block' }}
+            >
+              Finalizar Compra
+            </Link>
           </div>
         )}
       </main>

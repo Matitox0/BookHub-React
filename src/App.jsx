@@ -4,6 +4,8 @@ import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import Checkout from './pages/Checkout';
+import PaymentSuccess from './pages/PaymentSuccess';
 import { dataService } from './service/dataService';
 
 export default function App() {
@@ -71,6 +73,20 @@ export default function App() {
               usuarioLogueado={usuarioLogueado}
             />
           }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <Checkout
+              carrito={carrito}
+              setCarrito={setCarrito}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/pago-exitoso"
+          element={<PaymentSuccess usuarioLogueado={usuarioLogueado} />}
         />
         <Route
           path="/admin"
