@@ -1,17 +1,17 @@
 export default function QuantySelector({ id, value, onChange }) {
   return (
-    <div style={{ margin: '8px 0' }}>
-      <label htmlFor={id} style={{ fontSize: '13px', marginRight: '5px' }}>
+    <div className="mb-2">
+      <label htmlFor={id} className="form-label small me-2">
         Cantidad:
       </label>
       <input
         type="number"
         id={id}
-        className="input-cantidad"
+        className="form-control form-control-sm input-cantidad d-inline-block"
+        style={{ width: '80px' }}
         value={value}
         min="1"
         onChange={onChange}
-        style={{ width: '60px', padding: '4px' }}
       />
     </div>
   );

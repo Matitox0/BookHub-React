@@ -2,9 +2,11 @@ import BookCard from '../molecules/BookCard';
 
 export default function BookGrid({ libros, alAgregarAlCarrito }) {
   return (
-    <section id="libros" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '20px', marginTop: '20px' }}>
+    <section id="libros" className="row g-4">
       {libros.map((libro) => (
-        <BookCard key={libro.id} libro={libro} alAgregarAlCarrito={alAgregarAlCarrito} />
+        <div className="col-12 col-sm-6 col-lg-4" key={libro.id}>
+          <BookCard libro={libro} alAgregarAlCarrito={alAgregarAlCarrito} />
+        </div>
       ))}
     </section>
   );

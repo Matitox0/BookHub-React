@@ -40,8 +40,8 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
-      <main>
-        <section id="bienvenida" style={{ textAlign: 'center', margin: '20px 0' }}>
+      <main className="container">
+        <section id="bienvenida" className="text-center my-4">
           <h1>Bienvenido a BookHub</h1>
           <SearchForm
             busqueda={busqueda}
@@ -51,8 +51,8 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
           />
         </section>
 
-        <section className="busqueda">
-          <p id="resultadoBusqueda" style={{ fontWeight: 'bold' }}>
+        <section className="busqueda mb-3">
+          <p id="resultadoBusqueda" className="fw-bold">
             Resultados: {librosVisibles.length} libros encontrados
           </p>
         </section>

@@ -10,19 +10,25 @@ export default function BookCard({ libro, alAgregarAlCarrito }) {
   };
 
   return (
-    <article className="libro" style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
-      {libro.imagen && <img src={libro.imagen} alt={`Portada de ${libro.titulo}`} style={{ width: '100%', height: 'auto' }} />}
-      <h3>{libro.titulo}</h3>
-      <p><strong>Autor:</strong> {libro.autor}</p>
-      <p className="precio"><strong>Precio:</strong> ${libro.precio}</p>
-      <QuantySelector
-        id={`cant-${libro.id}`}
-        value={cantidad}
-        onChange={(e) => setCantidad(e.target.value)}
-      />
-      <button className="boton agregar-carrito" onClick={manejarAgregar}>
-        Agregar al carrito
-      </button>
+    <article className="card h-100 libro">
+      {libro.imagen && (
+        <img src={libro.imagen} className="card-img-top" alt={`Portada de ${libro.titulo}`} />
+      )}
+      <div className="card-body d-flex flex-column">
+        <h3 className="card-title h5">{libro.titulo}</h3>
+        <p className="card-text mb-1"><strong>Autor:</strong> {libro.autor}</p>
+        <p className="precio card-text"><strong>Precio:</strong> ${libro.precio}</p>
+        <div className="mt-auto">
+          <QuantySelector
+            id={`cant-${libro.id}`}
+            value={cantidad}
+            onChange={(e) => setCantidad(e.target.value)}
+          />
+          <button className="btn btn-primary w-100 agregar-carrito" onClick={manejarAgregar}>
+            Agregar al carrito
+          </button>
+        </div>
+      </div>
     </article>
   );
 }
