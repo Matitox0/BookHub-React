@@ -1,0 +1,46 @@
+/* Estilos base reutilizables para botones, inputs y tarjetas.
+   Las variables --azul / --blanco provienen del :root global (Header.css). */
+
+.boton {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--blanco, #ffffff);
+  background-color: var(--azul, #1a4d8f);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.boton:hover {
+  background-color: var(--azul-oscuro, #0f3560);
+}
+
+.boton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.input-cantidad {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.tarjeta-formulario {
+  background-color: #ffffff;
+  border: 1px solid #e5e4e7;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tarjeta-formulario {
+    background-color: #1f2028;
+    border-color: #2e303a;
+  }
+}
