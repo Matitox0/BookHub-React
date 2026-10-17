@@ -62,7 +62,7 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
-      <main style={{ padding: '20px 0' }}>
+      <main className="container my-4">
         <AdminForm
           libroId={libroId}
           titulo={titulo}
@@ -75,48 +75,41 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
           onCancelar={limpiarFormulario}
         />
 
-        <div className="contenedor-carrito" style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2>Inventario de Libros</h2>
-          <div id="lista-inventario">
-            {libros.length === 0 ? (
-              <p style={{ textAlign: 'center', color: '#666' }}>No hay libros en el inventario.</p>
-            ) : (
-              libros.map((libro) => (
-                <div
-                  key={libro.id}
-                  className="item-carrito"
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    borderBottom: '1px solid #ddd',
-                    padding: '10px 0'
-                  }}
-                >
-                  <div className="info-item">
-                    <h3>{libro.titulo}</h3>
-                    <p>{libro.autor}</p>
-                    <p className="precio">${libro.precio}</p>
+        <div className="row justify-content-center">
+          <div className="col-12 col-lg-8">
+            <h2>Inventario de Libros</h2>
+            <div id="lista-inventario" className="list-group">
+              {libros.length === 0 ? (
+                <p className="text-center text-muted">No hay libros en el inventario.</p>
+              ) : (
+                libros.map((libro) => (
+                  <div
+                    key={libro.id}
+                    className="item-carrito list-group-item d-flex justify-content-between align-items-center"
+                  >
+                    <div className="info-item">
+                      <h3 className="h6 mb-1">{libro.titulo}</h3>
+                      <p className="mb-1">{libro.autor}</p>
+                      <p className="precio mb-0">${libro.precio}</p>
+                    </div>
+                    <div>
+                      <button
+                        className="btn btn-warning btn-sm btn-editar me-2"
+                        onClick={() => seleccionarEditar(libro)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm btn-eliminar-admin eliminar-item"
+                        onClick={() => eliminarLibro(libro.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <button
-                      className="boton btn-editar"
-                      onClick={() => seleccionarEditar(libro)}
-                      style={{ backgroundColor: '#f0ad4e', marginRight: '5px' }}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="boton btn-eliminar-admin eliminar-item"
-                      onClick={() => eliminarLibro(libro.id)}
-                      style={{ backgroundColor: '#d9534f', color: '#fff' }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
         </div>
       </main>

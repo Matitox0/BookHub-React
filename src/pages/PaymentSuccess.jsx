@@ -7,7 +7,9 @@ export default function PaymentSuccess({ usuarioLogueado }) {
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
-      <main className="container my-5 text-center" style={{ maxWidth: '650px' }}>
+      <main className="container my-5 text-center">
+        <div className="row justify-content-center">
+          <div className="col-12 col-md-8">
         <div className="card p-5 shadow border-success">
           <div className="text-success mb-3 fs-1">✔</div>
           <h2 className="text-success mb-2">Se ha realizado la compra</h2>
@@ -20,6 +22,8 @@ export default function PaymentSuccess({ usuarioLogueado }) {
             <p className="fs-5 fw-bold text-primary">Total pagado: ${datos.total}</p>
           </div>
           <Link to="/" className="btn btn-primary btn-lg">Volver al Inicio</Link>
+        </div>
+          </div>
         </div>
       </main>
     </MainLayout>

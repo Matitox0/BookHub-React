@@ -27,7 +27,9 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
-      <main className="container my-5" style={{ maxWidth: '800px' }}>
+      <main className="container my-5">
+        <div className="row justify-content-center">
+          <div className="col-12 col-lg-9">
         <h2 className="mb-4">Carrito de compra - Finalizar Pedido</h2>
         
         <div className="card mb-4 shadow-sm">
@@ -79,6 +81,8 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
             Pagar ahora ${total}
           </button>
         </form>
+          </div>
+        </div>
       </main>
     </MainLayout>
   );
