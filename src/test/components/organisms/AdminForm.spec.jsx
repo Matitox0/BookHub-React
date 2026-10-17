@@ -37,11 +37,20 @@ describe('AdminForm Component', () => {
   });
 
   it('llama a la función onSubmit al enviar el formulario', () => {
-    render(<AdminForm {...propsBase} />);
+    const handleSubmit = jasmine.createSpy('onSubmit');
+    render(
+      <AdminForm
+        {...propsBase}
+        titulo="1984"
+        autor="George Orwell"
+        precio="9000"
+        onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}
+      />
+    );
 
     const btnSubmit = screen.getByRole('button', { name: 'Agregar Libro' });
     fireEvent.click(btnSubmit);
 
-    expect(propsBase.onSubmit).toHaveBeenCalled();
+    expect(handleSubmit).toHaveBeenCalled();
   });
 });

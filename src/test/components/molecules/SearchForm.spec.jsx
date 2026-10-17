@@ -24,7 +24,7 @@ describe('SearchForm Component', () => {
       <SearchForm
         busqueda="Fantasía"
         setBusqueda={() => {}}
-        onBuscar={handleBuscar}
+        onBuscar={(e) => { e.preventDefault(); handleBuscar(); }}
         onMostrarTodos={() => {}}
       />
     );

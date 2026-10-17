@@ -3,9 +3,11 @@ module.exports = function (config) {
  config.set({
    frameworks: ['jasmine'],
    files: [
+     'src/test/setupTests.js',
      'src/**/*.spec.jsx',
    ],
    preprocessors: {
+     'src/test/setupTests.js': ['webpack'],
      'src/**/*.spec.jsx': ['webpack'],
    },
    webpack: {
@@ -18,13 +20,20 @@ module.exports = function (config) {
            use: {
              loader: 'babel-loader',
              options: {
-               presets: ['@babel/preset-env', '@babel/preset-react'],
+               presets: [
+                 '@babel/preset-env',
+                 ['@babel/preset-react', { runtime: 'automatic' }],
+               ],
              },
            },
          },
          {
            test: /\.css$/,
            use: ['style-loader', 'css-loader'],
+         },
+         {
+           test: /\.(png|jpe?g|gif|svg)$/,
+           type: 'asset/resource',
          },
        ],
      },
