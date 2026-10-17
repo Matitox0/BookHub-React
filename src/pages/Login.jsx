@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import MainLayout from '../components/templates/MainLayout';
 import FormField from '../components/molecules/FormField';
 
 export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
   const [modo, setModo] = useState('login'); // 'login' | 'registro'
-  const [perfilGuardado, setPerfilGuardado] = useState(null);
+  const [perfilGuardado, setPerfilGuardado] = useState(() => {
+    const perfil = localStorage.getItem('perfilBookHub');
+    return perfil ? JSON.parse(perfil) : null;
+  });
 
   // Campos de formulario
   const [nombre, setNombre] = useState('');
@@ -12,14 +15,20 @@ export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
   const [genero, setGenero] = useState('');
   const [clave, setClave] = useState('');
 
-  useEffect(() => {
-    const perfil = JSON.parse(localStorage.getItem('perfilBookHub'));
-    if (perfil) setPerfilGuardado(perfil);
-  }, [usuarioLogueado]);
-
   // Punto 3: Método para iniciar sesión
   const manejarLogin = (e) => {
     e.preventDefault();
+
+    if (!perfilGuardado) {
+      alert('No existe una cuenta con ese correo. Regístrate primero.');
+      return;
+    }
+
+    if (perfilGuardado.email !== email || perfilGuardado.clave !== clave) {
+      alert('Correo o contraseña incorrectos.');
+      return;
+    }
+
     localStorage.setItem('sesionActivaBookHub', email);
     setUsuarioLogueado(email);
     alert('¡Bienvenido de nuevo!\nHas iniciado sesión correctamente con el correo: ' + email);
@@ -32,18 +41,18 @@ export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
       alert('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
-    const nuevoPerfil = { nombre, email, genero };
+    const nuevoPerfil = { nombre, email, genero, clave };
     localStorage.setItem('perfilBookHub', JSON.stringify(nuevoPerfil));
+    setPerfilGuardado(nuevoPerfil);
     alert(`¡Cuenta creada con éxito!\n\nBienvenido a BookHub, ${nombre}.\nHemos guardado tus gustos sobre: ${genero}`);
+    setClave('');
     setModo('login');
   };
 
   // Punto 6: Método para cerrar sesión perfil
   const cerrarSesion = () => {
-    localStorage.removeItem('perfilBookHub');
     localStorage.removeItem('sesionActivaBookHub');
     setUsuarioLogueado(null);
-    setPerfilGuardado(null);
     alert('Sesión cerrada correctamente.');
   };
 
@@ -73,6 +82,14 @@ export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <FormField
+                  label="Contraseña:"
+                  id="claveLogin"
+                  type="password"
+                  value={clave}
+                  onChange={(e) => setClave(e.target.value)}
                   required
                 />
                 <button type="submit" className="boton">Iniciar Sesión</button>

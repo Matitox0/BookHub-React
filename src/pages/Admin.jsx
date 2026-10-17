@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 import AdminForm from '../components/organisms/AdminForm';
 import { generarId } from '../service/dataService';
@@ -53,6 +54,11 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
     setAutor('');
     setPrecio('');
   };
+
+  // El panel de administración requiere sesión iniciada
+  if (!usuarioLogueado) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
