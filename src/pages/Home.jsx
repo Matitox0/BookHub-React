@@ -2,10 +2,14 @@ import { useState } from 'react';
 import MainLayout from '../components/templates/MainLayout';
 import SearchForm from '../components/molecules/SearchForm';
 import BookGrid from '../components/organisms/BookGrid';
+import Pagination from '../components/molecules/Pagination';
+
+const LIBROS_POR_PAGINA = 6;
 
 export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('');
+  const [pagina, setPagina] = useState(1);
 
   const manejarBuscar = (e) => {
     e.preventDefault();
@@ -27,16 +31,23 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
     }
 
     setFiltro(texto);
+    setPagina(1);
   };
 
   const manejarMostrarTodos = () => {
     setBusqueda('');
     setFiltro('');
+    setPagina(1);
   };
 
   const librosVisibles = filtro
     ? libros.filter((l) => `${l.titulo} ${l.autor}`.toLowerCase().includes(filtro))
     : libros;
+
+  const totalPaginas = Math.max(1, Math.ceil(librosVisibles.length / LIBROS_POR_PAGINA));
+  const paginaActual = Math.min(pagina, totalPaginas);
+  const inicio = (paginaActual - 1) * LIBROS_POR_PAGINA;
+  const librosPagina = librosVisibles.slice(inicio, inicio + LIBROS_POR_PAGINA);
 
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
@@ -57,7 +68,13 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
           </p>
         </section>
 
-        <BookGrid libros={librosVisibles} alAgregarAlCarrito={alAgregarAlCarrito} />
+        <BookGrid libros={librosPagina} alAgregarAlCarrito={alAgregarAlCarrito} />
+
+        <Pagination
+          paginaActual={paginaActual}
+          totalPaginas={totalPaginas}
+          onChange={setPagina}
+        />
       </main>
     </MainLayout>
   );
