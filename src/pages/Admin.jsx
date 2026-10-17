@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import MainLayout from '../components/templates/MainLayout';
 import AdminForm from '../components/organisms/AdminForm';
+import { generarId } from '../service/dataService';
 
 export default function Admin({ libros, setLibros, usuarioLogueado }) {
   const [libroId, setLibroId] = useState('');
@@ -10,19 +11,22 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
 
   const manejarGuardar = (e) => {
     e.preventDefault();
-    const nuevoLibro = {
-      id: libroId !== '' ? libros[libroId].id : Date.now(),
-      titulo,
-      autor,
-      precio: parseFloat(precio)
-    };
 
     if (libroId === '') {
+      const nuevoLibro = {
+        id: generarId(),
+        titulo,
+        autor,
+        precio: parseFloat(precio)
+      };
       setLibros([...libros, nuevoLibro]);
       alert('Libro agregado exitosamente.');
     } else {
-      const inventarioActualizado = [...libros];
-      inventarioActualizado[libroId] = nuevoLibro;
+      const inventarioActualizado = libros.map((libro) =>
+        libro.id === libroId
+          ? { ...libro, titulo, autor, precio: parseFloat(precio) }
+          : libro
+      );
       setLibros(inventarioActualizado);
       alert('Libro editado exitosamente.');
     }
@@ -30,18 +34,16 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
     limpiarFormulario();
   };
 
-  const seleccionarEditar = (index) => {
-    const libro = libros[index];
-    setLibroId(index.toString());
+  const seleccionarEditar = (libro) => {
+    setLibroId(libro.id);
     setTitulo(libro.titulo);
     setAutor(libro.autor);
     setPrecio(libro.precio);
   };
 
-  const eliminarLibro = (index) => {
+  const eliminarLibro = (id) => {
     if (confirm('¿Estás seguro de eliminar este libro?')) {
-      const inventarioActualizado = libros.filter((_, i) => i !== index);
-      setLibros(inventarioActualizado);
+      setLibros(libros.filter((libro) => libro.id !== id));
     }
   };
 
@@ -55,7 +57,6 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
   return (
     <MainLayout usuarioLogueado={usuarioLogueado}>
       <main style={{ padding: '20px 0' }}>
-        <input type="hidden" id="libroId" value={libroId} />
         <AdminForm
           libroId={libroId}
           titulo={titulo}
@@ -74,9 +75,9 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
             {libros.length === 0 ? (
               <p style={{ textAlign: 'center', color: '#666' }}>No hay libros en el inventario.</p>
             ) : (
-              libros.map((libro, index) => (
+              libros.map((libro) => (
                 <div
-                  key={libro.id || index}
+                  key={libro.id}
                   className="item-carrito"
                   style={{
                     display: 'flex',
@@ -94,14 +95,14 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
                   <div>
                     <button
                       className="boton btn-editar"
-                      onClick={() => seleccionarEditar(index)}
+                      onClick={() => seleccionarEditar(libro)}
                       style={{ backgroundColor: '#f0ad4e', marginRight: '5px' }}
                     >
                       Editar
                     </button>
                     <button
                       className="boton btn-eliminar-admin eliminar-item"
-                      onClick={() => eliminarLibro(index)}
+                      onClick={() => eliminarLibro(libro.id)}
                       style={{ backgroundColor: '#d9534f', color: '#fff' }}
                     >
                       Eliminar

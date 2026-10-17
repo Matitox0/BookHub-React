@@ -4,23 +4,14 @@ import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
-
-const LIBROS_INICIALES = [
-  { id: 1, titulo: 'Cien Años de Soledad', autor: 'Gabriel García Márquez', precio: 15000, imagen: '' },
-  { id: 2, titulo: 'La Casa de los Espíritus', autor: 'Isabel Allende', precio: 12000, imagen: '' }
-];
+import { dataService } from './service/dataService';
 
 export default function App() {
-  // Persistencia de inventario
-  const [libros, setLibros] = useState(() => {
-    const local = localStorage.getItem('inventarioBookHub');
-    return local ? JSON.parse(local) : LIBROS_INICIALES;
-  });
+  // Persistencia de inventario (catálogo completo desde dataService)
+  const [libros, setLibros] = useState(() => dataService.obtenerLibros());
 
   // Persistencia de carrito
-  const [carrito, setCarrito] = useState(() => {
-    return JSON.parse(localStorage.getItem('carritoBookHub')) || [];
-  });
+  const [carrito, setCarrito] = useState(() => dataService.obtenerCarrito());
 
   // Persistencia de sesión
   const [usuarioLogueado, setUsuarioLogueado] = useState(() => {
@@ -28,11 +19,11 @@ export default function App() {
   });
 
   useEffect(() => {
-    localStorage.setItem('inventarioBookHub', JSON.stringify(libros));
+    dataService.guardarLibros(libros);
   }, [libros]);
 
   useEffect(() => {
-    localStorage.setItem('carritoBookHub', JSON.stringify(carrito));
+    dataService.guardarCarrito(carrito);
   }, [carrito]);
 
   const alAgregarAlCarrito = (libro, cantidad) => {

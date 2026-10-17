@@ -4,7 +4,7 @@ export default function Cart({ carrito, setCarrito, usuarioLogueado }) {
   const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
   const eliminarItem = (id) => {
-    const nuevoCarrito = carrito.filter((item) => item.id !== id);
+    const nuevoCarrito = carrito.filter((item) => String(item.id) !== String(id));
     setCarrito(nuevoCarrito);
   };
 

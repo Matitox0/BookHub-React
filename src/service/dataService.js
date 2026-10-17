@@ -10,48 +10,36 @@ const LIBROS_INICIALES = [
   { id: '9', titulo: '1984', autor: 'George Orwell', precio: 6000, categoria: 'Ciencia Ficción', imagen: 'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg' }
 ];
 
+const KEY_LIBROS = 'inventarioBookHub';
+const KEY_CARRITO = 'carritoBookHub';
+
+// Genera un id único (string) para un libro nuevo.
+export const generarId = () => String(Date.now());
+
 export const dataService = {
-  // READ (Inventario)
+  // READ (Inventario). Si no existe, siembra el catálogo inicial.
   obtenerLibros: () => {
-    const local = localStorage.getItem('inventarioBookHub');
+    const local = localStorage.getItem(KEY_LIBROS);
     if (!local) {
-      localStorage.setItem('inventarioBookHub', JSON.stringify(LIBROS_INICIALES));
+      localStorage.setItem(KEY_LIBROS, JSON.stringify(LIBROS_INICIALES));
       return LIBROS_INICIALES;
     }
     return JSON.parse(local);
   },
 
-  // CREATE
-  guardarLibro: (nuevoLibro) => {
-    const libros = dataService.obtenerLibros();
-    const listaActualizada = [...libros, { ...nuevoLibro, id: String(Date.now()) }];
-    localStorage.setItem('inventarioBookHub', JSON.stringify(listaActualizada));
-    return listaActualizada;
+  // WRITE (Inventario)
+  guardarLibros: (libros) => {
+    localStorage.setItem(KEY_LIBROS, JSON.stringify(libros));
   },
 
-  // UPDATE
-  actualizarLibro: (id, libroModificado) => {
-    const libros = dataService.obtenerLibros();
-    const listaActualizada = libros.map(l => l.id === id ? { ...l, ...libroModificado } : l);
-    localStorage.setItem('inventarioBookHub', JSON.stringify(listaActualizada));
-    return listaActualizada;
-  },
-
-  // DELETE
-  eliminarLibro: (id) => {
-    const libros = dataService.obtenerLibros();
-    const listaActualizada = libros.filter(l => l.id !== id);
-    localStorage.setItem('inventarioBookHub', JSON.stringify(listaActualizada));
-    return listaActualizada;
-  },
-
-  // READ/WRITE Carrito
+  // READ (Carrito)
   obtenerCarrito: () => {
-    const local = localStorage.getItem('carritoBookHub');
+    const local = localStorage.getItem(KEY_CARRITO);
     return local ? JSON.parse(local) : [];
   },
 
+  // WRITE (Carrito)
   guardarCarrito: (carrito) => {
-    localStorage.setItem('carritoBookHub', JSON.stringify(carrito));
+    localStorage.setItem(KEY_CARRITO, JSON.stringify(carrito));
   }
 };
