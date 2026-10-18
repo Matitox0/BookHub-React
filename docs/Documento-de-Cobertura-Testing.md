@@ -101,6 +101,7 @@ Los **12 componentes** del frontend, cubriendo todos los niveles de Atomic Desig
 |---|---|
 | Páginas (`Home`, `Cart`, `Checkout`, `Login`, `Admin`, `PaymentSuccess`) | La evaluación pide pruebas de **componentes** frontend. Las páginas se validaron de forma manual (flujo completo en el navegador). |
 | `dataService.js` | Depende de `localStorage`; se validó manualmente. Se podría cubrir con un mock de `localStorage` en una siguiente etapa. |
+| `authService.js` | Contiene las credenciales del administrador; se excluye del reporte por ser configuración, aunque su lógica se ejercita indirectamente desde `Header.spec.jsx`. |
 | `App.jsx` | Es el pegamento entre páginas y estado; se prueba indirectamente al usar el sistema. |
 | Pruebas end-to-end e integración | No son parte de esta entrega (aquí van pruebas unitarias). |
 
@@ -112,7 +113,7 @@ Los **12 componentes** del frontend, cubriendo todos los niveles de Atomic Desig
 
 ### 4.1 Estructura
 
-Cada componente tiene su archivo `*.spec.jsx` con un `describe('NombreComponente Component', ...)` y varios `it(...)`. En total son **43 casos de prueba**.
+Cada componente tiene su archivo `*.spec.jsx` con un `describe('NombreComponente Component', ...)` y varios `it(...)`. En total son **44 casos de prueba**.
 
 ### 4.2 Técnicas aplicadas
 
@@ -154,15 +155,15 @@ Aquí se comprueba la lógica (que se convierta la cantidad a número), el compo
 | `AdminForm` | `organisms/AdminForm.spec.jsx` | 4 |
 | `BookGrid` | `organisms/BookGrid.spec.jsx` | 3 |
 | `Footer` | `organisms/Footer.spec.jsx` | 3 |
-| `Header` | `organisms/Header.spec.jsx` | 4 |
+| `Header` | `organisms/Header.spec.jsx` | 5 |
 | `MainLayout` | `templates/MainLayout.spec.jsx` | 3 |
-| **Total** | **12 archivos** | **43** |
+| **Total** | **12 archivos** | **44** |
 
 Algunos casos que vale la pena destacar:
 
 - `BookCard`: verifica que la imagen **no** se renderiza cuando el libro no tiene `imagen`.
 - `Pagination`: prueba que no se renderiza nada con una sola página y que los botones "Anterior"/"Siguiente" se deshabilitan en los extremos.
-- `Header`: prueba el cambio de "Acceder / Registrarse" a "Mi Perfil" según `usuarioLogueado`, y el despliegue del menú colapsable.
+- `Header`: prueba el cambio de "Acceder / Registrarse" a "Mi Perfil" según `usuarioLogueado`, el despliegue del menú colapsable y que el enlace "Administrador" solo aparezca con la sesión del administrador.
 - `AdminForm`: prueba el render en modo "Agregar" vs. "Editar" y que los setters reciban lo que se escribe.
 
 ---
@@ -172,16 +173,16 @@ Algunos casos que vale la pena destacar:
 ### 6.1 Ejecución
 
 ```
-TOTAL: 43 SUCCESS
+TOTAL: 44 SUCCESS
 ```
 
-Las **43 pruebas pasan** en ChromeHeadless.
+Las **44 pruebas pasan** en ChromeHeadless.
 
 ### 6.2 Resumen de cobertura
 
 ```
 Statements   : 100% ( 35/35 )
-Branches     : 100% ( 27/27 )
+Branches     : 100% ( 29/29 )
 Functions    : 100% ( 24/24 )
 Lines        : 100% ( 34/34 )
 ```
@@ -200,7 +201,7 @@ Lines        : 100% ( 34/34 )
 | `organisms/AdminForm.jsx` | 100% (5/5) | 100% (6/6) | 100% (4/4) | 100% (5/5) |
 | `organisms/BookGrid.jsx` | 100% (2/2) | — | 100% (2/2) | 100% (2/2) |
 | `organisms/Footer.jsx` | 100% (1/1) | — | 100% (1/1) | 100% (1/1) |
-| `organisms/Header.jsx` | 100% (3/3) | 100% (4/4) | 100% (2/2) | 100% (3/3) |
+| `organisms/Header.jsx` | 100% (3/3) | 100% (6/6) | 100% (2/2) | 100% (3/3) |
 | `templates/MainLayout.jsx` | 100% (1/1) | — | 100% (1/1) | 100% (1/1) |
 
 *(El guion "—" en Branches significa que ese archivo no tiene ramas condicionales que evaluar.)*

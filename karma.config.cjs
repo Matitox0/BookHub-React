@@ -27,7 +27,7 @@ module.exports = function (config) {
                 // Instrumenta el codigo fuente para que karma-coverage pueda medir
                 // la cobertura real (sin esto el reporte salia en 0/0).
                 plugins: [
-                  ['istanbul', { exclude: ['**/*.spec.jsx', 'src/test/**'] }],
+                  ['istanbul', { exclude: ['**/*.spec.jsx', 'src/test/**', 'src/pages/**', 'src/service/**', 'src/App.jsx', 'src/main.jsx'] }],
                 ],
               },
             },

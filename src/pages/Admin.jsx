@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 import AdminForm from '../components/organisms/AdminForm';
 import { generarId } from '../service/dataService';
+import { esAdmin } from '../service/authService';
 
 export default function Admin({ libros, setLibros, usuarioLogueado }) {
   const [libroId, setLibroId] = useState('');
@@ -58,6 +59,25 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
   // El panel de administración requiere sesión iniciada
   if (!usuarioLogueado) {
     return <Navigate to="/login" replace />;
+  }
+
+  // ...y además ser el administrador
+  if (!esAdmin(usuarioLogueado)) {
+    return (
+      <MainLayout usuarioLogueado={usuarioLogueado}>
+        <main className="container my-5 text-center">
+          <div className="row justify-content-center">
+            <div className="col-12 col-md-6">
+              <div className="card p-4 shadow-sm border-danger">
+                <h2 className="text-danger h4">Acceso restringido</h2>
+                <p className="mb-0">Solo el administrador puede gestionar el inventario.</p>
+                <Link to="/" className="btn btn-primary mt-3">Volver al inicio</Link>
+              </div>
+            </div>
+          </div>
+        </main>
+      </MainLayout>
+    );
   }
 
   return (

@@ -41,7 +41,8 @@ src/
 │   ├── Admin.jsx        #   Panel de administración del inventario
 │   └── PaymentSuccess.jsx
 ├── service/
-│   └── dataService.js   # Persistencia en localStorage (inventario y carrito)
+│   ├── dataService.js   # Persistencia en localStorage (inventario y carrito)
+│   └── authService.js   # Credenciales y control de acceso del administrador
 ├── styles/              # Estilos personalizados (tema Bootstrap, Header, átomos)
 ├── test/                # Pruebas unitarias (*.spec.jsx) + setupTests.js
 ├── App.jsx              # Componente raíz y definición de rutas
@@ -88,11 +89,28 @@ npm run build
 npm run preview
 ```
 
+## 🔑 Acceso de administrador
+
+El panel de administración (`/admin`) está protegido: solo la cuenta de administrador puede
+gestionar el inventario. Para entrar, inicia sesión en `/login` con:
+
+| Campo | Valor |
+|---|---|
+| Correo | `admin@bookhub.cl` |
+| Contraseña | `admin123` |
+
+Con una cuenta de cliente normal, el enlace "Administrador" **no** aparece en el menú y el
+panel muestra un mensaje de "Acceso restringido".
+
+> Nota: al no haber backend, estas credenciales viven en el frontend
+> (`src/service/authService.js`). En un proyecto real irían en el servidor y con la
+> contraseña hasheada.
+
 ## ✅ Pruebas unitarias (Jasmine + Karma)
 
-El proyecto cuenta con **43 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
+El proyecto cuenta con **44 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
 que verifican la lógica, el comportamiento y la manipulación del DOM de los componentes
-frontend. Todas las pruebas pasan (`TOTAL: 43 SUCCESS`).
+frontend. Todas las pruebas pasan (`TOTAL: 44 SUCCESS`).
 
 ```bash
 # Ejecutar las pruebas unitarias

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { esAdmin } from '../../service/authService';
 import "../../styles/Header.css";
 
 export default function Header({ usuarioLogueado }) {
@@ -23,7 +24,9 @@ export default function Header({ usuarioLogueado }) {
           <nav className="navbar-nav ms-auto">
             <Link to="/" className="nav-link">Inicio</Link>
             <Link to="/cart" className="nav-link">Carrito de Compras</Link>
-            <Link to="/admin" className="nav-link">Administrador</Link>
+            {esAdmin(usuarioLogueado) && (
+              <Link to="/admin" className="nav-link">Administrador</Link>
+            )}
             <Link to="/login" id="linkPerfil" className="nav-link">
               {usuarioLogueado ? 'Mi Perfil' : 'Acceder / Registrarse'}
             </Link>

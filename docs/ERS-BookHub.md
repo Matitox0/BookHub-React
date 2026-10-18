@@ -51,6 +51,7 @@ BookHub es una **aplicación web de una sola página (SPA)** para vender libros.
 - **Carrito:** la lista de libros seleccionados con su cantidad (`carritoBookHub`).
 - **Sesión:** el correo del usuario que tiene sesión activa (`sesionActivaBookHub`).
 - **Perfil:** los datos guardados del usuario registrado (`perfilBookHub`): nombre, correo, género literario y contraseña.
+- **Administrador:** cuenta con permisos para gestionar el inventario (`admin@bookhub.cl`).
 - **Componente:** unidad reutilizable del frontend (siguiendo *Atomic Design*: átomos, moléculas, organismos y plantillas).
 
 ---
@@ -74,7 +75,7 @@ Los componentes están organizados con **Atomic Design**:
 - **organismos:** `AdminForm`, `BookGrid`, `Footer`, `Header`.
 - **plantillas:** `MainLayout` (header + contenido + footer).
 
-El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App.jsx` con `useState` y se comparte hacia abajo por *props*. La persistencia la resuelve `src/service/dataService.js`, que lee y escribe en `localStorage`.
+El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App.jsx` con `useState` y se comparte hacia abajo por *props*. La persistencia la resuelve `src/service/dataService.js`, que lee y escribe en `localStorage`. El control de acceso del administrador vive en `src/service/authService.js`.
 
 ### 2.3 Usuarios
 
@@ -82,9 +83,9 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 |---|---|
 | **Visitante** | Ver el catálogo, buscar, paginar y armar un carrito. |
 | **Cliente registrado** | Todo lo anterior + iniciar/cerrar sesión y ver su perfil. |
-| **Administrador** | Todo lo anterior + entrar al panel `/admin` para agregar, editar y eliminar libros (requiere sesión activa). |
+| **Administrador** | Todo lo anterior + entrar al panel `/admin` para agregar, editar y eliminar libros. |
 
-> Nota: no hay roles "de verdad" todavía. Cualquier usuario con sesión iniciada puede entrar al panel de administración. Lo dejamos así a propósito por simplicidad; si el proyecto siguiera, lo separaríamos con un campo de rol.
+> El administrador es una cuenta fija, `admin@bookhub.cl`. El control de acceso está en `src/service/authService.js`: si el correo de la sesión no es el del administrador, el enlace "Administrador" no aparece en el menú y el panel muestra un mensaje de "Acceso restringido". Como no hay backend, las credenciales viven en el frontend; en un proyecto real irían en el servidor con la contraseña hasheada.
 
 ### 2.4 Funciones principales (resumen)
 
@@ -132,7 +133,7 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | RF-13 | Iniciar sesión | El acceso valida que el correo y la contraseña coincidan con el perfil guardado. | Alta |
 | RF-14 | Ver perfil | Con sesión activa, `/login` muestra el perfil del usuario y un botón para cerrar sesión. | Media |
 | RF-15 | Cerrar sesión | Se elimina la sesión activa y el usuario vuelve al estado de visitante. | Media |
-| RF-16 | Proteger el panel | Si no hay sesión, `/admin` redirige a `/login`. | Alta |
+| RF-16 | Proteger el panel | `/admin` solo es accesible para la cuenta de administrador. Sin sesión redirige a `/login`; con una sesión de cliente muestra "Acceso restringido". | Alta |
 | RF-17 | Agregar libro | El administrador agrega un libro con título, autor y precio. | Alta |
 | RF-18 | Editar libro | El administrador selecciona un libro, edita sus datos y guarda los cambios. | Alta |
 | RF-19 | Eliminar libro | El administrador elimina un libro, pidiendo confirmación antes. | Alta |
@@ -242,7 +243,7 @@ Es un libro más un campo `cantidad` (number).
 
 ### 7.3 Administrar el inventario
 
-1. El usuario con sesión entra a `/admin` (si no hay sesión, lo manda al login).
+1. El administrador inicia sesión con su cuenta en `/login` y entra a `/admin` (si no hay sesión, lo manda al login; si la sesión es de un cliente, ve "Acceso restringido").
 2. Completa el formulario para agregar un libro, o pulsa "Editar" en uno existente.
 3. Puede eliminar un libro (con confirmación).
 4. Los cambios se guardan en `localStorage` y se reflejan en el catálogo.
@@ -259,7 +260,7 @@ Esta sección responde a lo que pide la Evaluación Parcial N° 2:
 - **RP-04:** Se deben usar *mocks* (`jasmine.createSpy`) para comprobar las llamadas a callbacks (props como `onClick`, `onChange`, `alAgregarAlCarrito`).
 - **RP-05:** Se debe generar y analizar un reporte de cobertura de código.
 
-El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la cobertura están en el documento **"Cobertura de Testing"** que acompaña a esta entrega. En resumen: 43 casos de prueba sobre los 12 componentes, todos en verde, con 100% de cobertura en los archivos incluidos en el alcance.
+El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la cobertura están en el documento **"Cobertura de Testing"** que acompaña a esta entrega. En resumen: 44 casos de prueba sobre los 12 componentes, todos en verde, con 100% de cobertura en los archivos incluidos en el alcance.
 
 ---
 
@@ -271,6 +272,7 @@ El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la co
 | RF-01, RF-02, RF-03 | `SearchForm`, `BookGrid` | `SearchForm.spec.jsx`, `BookGrid.spec.jsx` |
 | RF-04 | `Pagination` | `Pagination.spec.jsx` |
 | RF-17, RF-18, RF-19 | `AdminForm` | `AdminForm.spec.jsx` |
+| RF-16 (control de acceso) | `Header` (enlace solo para admin) | `Header.spec.jsx` |
 | RF-12, RF-13, RF-14 | `FormField`, `Button`, `Input` | `FormField.spec.jsx`, `Button.spec.jsx`, `Input.spec.jsx` |
 | Navegación general | `Header`, `Footer`, `MainLayout` | `Header.spec.jsx`, `Footer.spec.jsx`, `MainLayout.spec.jsx` |
 
@@ -282,7 +284,7 @@ Somos conscientes de varios puntos que quedaron pendientes y preferimos dejarlos
 
 - **Los mensajes usan `alert()`.** Funciona, pero se ve antiguo; lo ideal sería un componente de notificaciones.
 - **La contraseña se guarda tal cual en `localStorage`.** Es un problema de seguridad real; en un proyecto serio iría con hash y backend.
-- **No hay roles.** Como se explicó en 2.3, cualquier sesión puede administrar.
+- **El administrador es una cuenta fija.** Las credenciales están en el frontend (`authService.js`), así que no es un control de acceso seguro. En un proyecto real iría en el servidor, con roles y contraseña hasheada.
 - **La paginación carga todos los libros de una vez.** Para 19 libros no es problema; con miles convendría paginar del lado del servidor.
 - **Cobertura acotada a componentes.** Las pruebas unitarias cubren los 12 componentes; las páginas y el `dataService` quedaron fuera del alcance de esta entrega y se validaron de forma manual.
 - **El número de orden es fijo.** Falta conectar una pasarela real.

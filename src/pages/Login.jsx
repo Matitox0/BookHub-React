@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 import FormField from '../components/molecules/FormField';
+import { credencialesAdminValidas, esAdmin } from '../service/authService';
 
 export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
   const [modo, setModo] = useState('login'); // 'login' | 'registro'
@@ -18,6 +20,14 @@ export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
   // Punto 3: Método para iniciar sesión
   const manejarLogin = (e) => {
     e.preventDefault();
+
+    // Acceso del administrador (credenciales fijas, sin backend)
+    if (credencialesAdminValidas(email, clave)) {
+      localStorage.setItem('sesionActivaBookHub', email);
+      setUsuarioLogueado(email);
+      alert('¡Bienvenido, administrador!\nYa puedes gestionar el inventario.');
+      return;
+    }
 
     if (!perfilGuardado) {
       alert('No existe una cuenta con ese correo. Regístrate primero.');
@@ -65,9 +75,13 @@ export default function Login({ usuarioLogueado, setUsuarioLogueado }) {
             {usuarioLogueado ? (
               <div id="datosPerfil" className="card p-4 shadow-sm">
                 <h2>Mi Perfil</h2>
-                <p><strong>Nombre:</strong> <span id="perfilNombre">{perfilGuardado?.nombre || 'Usuario'}</span></p>
+                <p><strong>Rol:</strong> <span id="perfilRol">{esAdmin(usuarioLogueado) ? 'Administrador' : 'Cliente'}</span></p>
+                <p><strong>Nombre:</strong> <span id="perfilNombre">{perfilGuardado?.nombre || (esAdmin(usuarioLogueado) ? 'Administrador' : 'Usuario')}</span></p>
                 <p><strong>Email:</strong> <span id="perfilEmail">{usuarioLogueado}</span></p>
                 <p><strong>Gusto Literario:</strong> <span id="perfilGenero">{perfilGuardado?.genero || 'No especificado'}</span></p>
+                {esAdmin(usuarioLogueado) && (
+                  <Link to="/admin" className="btn btn-primary mt-2">Ir al panel de administración</Link>
+                )}
                 <button id="cerrarSesion" className="btn btn-danger mt-3" onClick={cerrarSesion}>
                   Cerrar Sesión
                 </button>
