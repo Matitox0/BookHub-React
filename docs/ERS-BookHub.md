@@ -170,6 +170,8 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | Ruta | Pantalla | Qué muestra |
 |---|---|---|
 | `/` | Inicio | Buscador, contador de resultados, grilla de libros y paginación. |
+| `/categorias` | Categorías | Botones por categoría (con conteo de libros) y grilla filtrada por la categoría elegida. |
+| `/ofertas` | Ofertas | Grilla con los libros que tienen una oferta vigente. |
 | `/cart` | Carrito | Tabla de ítems, total, botones "Vaciar" y "Finalizar Compra". |
 | `/checkout` | Finalizar pedido | Resumen del pedido + formulario de cliente y despacho. |
 | `/pago-exitoso` | Compra exitosa | Confirmación, número de orden y datos de entrega. |

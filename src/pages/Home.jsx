@@ -4,22 +4,9 @@ import SearchForm from '../components/molecules/SearchForm';
 import BookGrid from '../components/organisms/BookGrid';
 import Pagination from '../components/molecules/Pagination';
 import { dataService } from '../service/dataService';
+import { aplicarOferta } from '../service/ofertaService';
 
 const LIBROS_POR_PAGINA = 6;
-
-// Aplica el descuento de una oferta al libro, conservando el precio original.
-const aplicarOferta = (libro, ofertas) => {
-  const oferta = ofertas.find((o) => String(o.libroId) === String(libro.id));
-  if (!oferta) return libro;
-
-  const precioFinal = Math.round(libro.precio * (1 - oferta.descuento / 100));
-  return {
-    ...libro,
-    precioOriginal: libro.precio,
-    precio: precioFinal,
-    descuento: oferta.descuento
-  };
-};
 
 export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
   const [busqueda, setBusqueda] = useState('');

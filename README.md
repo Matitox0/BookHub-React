@@ -35,6 +35,8 @@ src/
 │   └── templates/       #   MainLayout
 ├── pages/               # Páginas de la aplicación
 │   ├── Home.jsx         #   Catálogo + búsqueda + paginación (+ ofertas)
+│   ├── Categorias.jsx   #   Productos separados por categoría
+│   ├── Ofertas.jsx      #   Productos con oferta vigente
 │   ├── Cart.jsx         #   Carrito de compras
 │   ├── Checkout.jsx     #   Finalización del pedido
 │   ├── Login.jsx        #   Registro / inicio de sesión / perfil
@@ -45,6 +47,7 @@ src/
 ├── service/
 │   ├── dataService.js   # Persistencia en localStorage (inventario, carrito,
 │   │                    # categorías, ofertas y pedidos)
+│   ├── ofertaService.js # Cálculo del precio con descuento
 │   └── authService.js   # Credenciales y control de acceso del administrador
 ├── styles/              # Estilos personalizados (tema Bootstrap, Header, átomos)
 ├── test/                # Pruebas unitarias (*.spec.jsx) + setupTests.js

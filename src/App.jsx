@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Categorias from './pages/Categorias';
+import Ofertas from './pages/Ofertas';
 import Cart from './pages/Cart';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
@@ -63,6 +65,26 @@ export default function App() {
           path="/"
           element={
             <Home
+              libros={libros}
+              alAgregarAlCarrito={alAgregarAlCarrito}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/categorias"
+          element={
+            <Categorias
+              libros={libros}
+              alAgregarAlCarrito={alAgregarAlCarrito}
+              usuarioLogueado={usuarioLogueado}
+            />
+          }
+        />
+        <Route
+          path="/ofertas"
+          element={
+            <Ofertas
               libros={libros}
               alAgregarAlCarrito={alAgregarAlCarrito}
               usuarioLogueado={usuarioLogueado}
