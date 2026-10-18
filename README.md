@@ -47,6 +47,7 @@ src/
 ├── App.jsx              # Componente raíz y definición de rutas
 └── main.jsx             # Punto de entrada de la aplicación
 ```
+El ERS y el documento de cobertura de testing están en la carpeta [`docs/`](docs/).
 
 ## 🧩 Componentes, propiedades y estados
 
@@ -89,9 +90,9 @@ npm run preview
 
 ## ✅ Pruebas unitarias (Jasmine + Karma)
 
-El proyecto cuenta con **38 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
+El proyecto cuenta con **43 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
 que verifican la lógica, el comportamiento y la manipulación del DOM de los componentes
-frontend.
+frontend. Todas las pruebas pasan (`TOTAL: 43 SUCCESS`).
 
 ```bash
 # Ejecutar las pruebas unitarias
@@ -104,7 +105,8 @@ npm run lint
 ### Cobertura del testing
 
 Las pruebas se ejecutan con **Karma Headless** y generan un reporte de cobertura de código
-(Istanbul) en la carpeta `coverage/`.
+(Istanbul) en la carpeta `coverage/`. Sobre los 12 componentes del alcance la cobertura es
+del **100%** en statements, branches, functions y lines.
 
 ```bash
 # Ejecutar pruebas y generar el reporte de cobertura
@@ -119,7 +121,8 @@ y `MainLayout`.
 ### Conceptos de testing aplicados
 
 - **Configuración del entorno:** `karma.config.cjs` (frameworks, preprocesadores,
-  navegador `ChromeHeadless`) y `setupTests.js` (matchers de Testing Library).
+  `babel-plugin-istanbul` para la cobertura, navegador `ChromeHeadless`) y `setupTests.js`
+  (matchers de Testing Library).
 - **Escritura de pruebas:** bloques `describe` / `it` con `expect`, usando
   `@testing-library/react` para renderizar y consultar el DOM.
 - **Uso de mocks:** `jasmine.createSpy` para verificar llamadas a callbacks
@@ -128,5 +131,5 @@ y `MainLayout`.
 
 ## 📄 Documentación
 
-- **ERS** — Especificación de Requisitos del Software (documento aparte).
-- **Documento de cobertura de testing** — alcance del testing (documento aparte).
+- **ERS** — [Especificación de Requisitos del Software](docs/ERS-BookHub.md).
+- **Documento de cobertura de testing** — [alcance del testing](docs/Documento-de-Cobertura-Testing.md).

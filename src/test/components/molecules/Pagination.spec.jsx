@@ -42,4 +42,19 @@ describe('Pagination Component', () => {
 
     expect(handleChange).toHaveBeenCalledWith(3);
   });
+
+  it('llama a onChange con la pagina anterior al pulsar "Anterior"', () => {
+    const handleChange = jasmine.createSpy('onChange');
+    render(<Pagination paginaActual={2} totalPaginas={3} onChange={handleChange} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Anterior' }));
+
+    expect(handleChange).toHaveBeenCalledWith(1);
+  });
+
+  it('deshabilita el boton "Siguiente" en la ultima pagina', () => {
+    render(<Pagination paginaActual={3} totalPaginas={3} onChange={() => {}} />);
+
+    expect(screen.getByRole('button', { name: 'Siguiente' }).disabled).toBe(true);
+  });
 });

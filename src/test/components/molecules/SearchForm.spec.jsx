@@ -50,4 +50,21 @@ describe('SearchForm Component', () => {
 
     expect(handleMostrarTodos).toHaveBeenCalled();
   });
+
+  it('llama a setBusqueda al escribir en el input', () => {
+    const handleSetBusqueda = jasmine.createSpy('setBusqueda');
+    render(
+      <SearchForm
+        busqueda=""
+        setBusqueda={handleSetBusqueda}
+        onBuscar={() => {}}
+        onMostrarTodos={() => {}}
+      />
+    );
+
+    const input = screen.getByPlaceholderText('Escribe un título o autor...');
+    fireEvent.change(input, { target: { value: 'Orwell' } });
+
+    expect(handleSetBusqueda).toHaveBeenCalledWith('Orwell');
+  });
 });

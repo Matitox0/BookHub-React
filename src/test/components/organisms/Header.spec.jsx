@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../../../components/organisms/Header';
 
@@ -36,5 +36,19 @@ describe('Header Component', () => {
 
     expect(screen.getByText('Mi Perfil')).toBeTruthy();
     expect(screen.queryByText('Acceder / Registrarse')).toBeNull();
+  });
+
+  it('alterna el menu colapsable al pulsar el boton hamburguesa', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Header usuarioLogueado={false} />
+      </MemoryRouter>
+    );
+
+    expect(container.querySelector('.navbar-collapse').className).not.toContain('show');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir menu' }));
+
+    expect(container.querySelector('.navbar-collapse').className).toContain('show');
   });
 });

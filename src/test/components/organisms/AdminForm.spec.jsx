@@ -52,4 +52,27 @@ describe('AdminForm Component', () => {
 
     expect(handleSubmit).toHaveBeenCalled();
   });
+
+  it('llama a los setters al escribir en cada campo del formulario', () => {
+    const setTitulo = jasmine.createSpy('setTitulo');
+    const setAutor = jasmine.createSpy('setAutor');
+    const setPrecio = jasmine.createSpy('setPrecio');
+
+    render(
+      <AdminForm
+        {...propsBase}
+        setTitulo={setTitulo}
+        setAutor={setAutor}
+        setPrecio={setPrecio}
+      />
+    );
+
+    fireEvent.change(screen.getByLabelText('Título:'), { target: { value: 'Nuevo Título' } });
+    fireEvent.change(screen.getByLabelText('Autor:'), { target: { value: 'Nuevo Autor' } });
+    fireEvent.change(screen.getByLabelText('Precio:'), { target: { value: '9999' } });
+
+    expect(setTitulo).toHaveBeenCalledWith('Nuevo Título');
+    expect(setAutor).toHaveBeenCalledWith('Nuevo Autor');
+    expect(setPrecio).toHaveBeenCalledWith('9999');
+  });
 });
