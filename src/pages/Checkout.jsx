@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
+import { dataService } from '../service/dataService';
 
 export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
   const navigate = useNavigate();
@@ -20,6 +21,22 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
 
     // Simulación de respuesta de pasarela
     const orden = '#20240705';
+
+    // Se registra el pedido para que quede disponible en el panel de administración.
+    dataService.registrarPedido({
+      nroOrden: orden,
+      cliente: nombre,
+      correo,
+      direccion,
+      comuna,
+      total,
+      items: carrito.map((item) => ({
+        titulo: item.titulo,
+        cantidad: item.cantidad,
+        precio: item.precio
+      }))
+    });
+
     setCarrito([]);
     localStorage.removeItem('carritoBookHub');
     navigate('/pago-exitoso', { state: { nroOrden: orden, cliente: nombre, total, direccion, comuna, correo } });

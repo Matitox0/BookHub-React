@@ -6,6 +6,11 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminProducts from './pages/admin/AdminProducts';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminOffers from './pages/admin/AdminOffers';
+import AdminOrders from './pages/admin/AdminOrders';
 import { dataService } from './service/dataService';
 
 export default function App() {
@@ -97,7 +102,13 @@ export default function App() {
               usuarioLogueado={usuarioLogueado}
             />
           }
-        />
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="productos" element={<AdminProducts />} />
+          <Route path="categorias" element={<AdminCategories />} />
+          <Route path="ofertas" element={<AdminOffers />} />
+          <Route path="pedidos" element={<AdminOrders />} />
+        </Route>
         <Route
           path="/login"
           element={

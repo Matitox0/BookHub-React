@@ -23,7 +23,44 @@ const LIBROS_INICIALES = [
 const KEY_LIBROS = 'inventarioBookHub';
 const KEY_CARRITO = 'carritoBookHub';
 const KEY_VERSION = 'catalogoVersion';
+const KEY_CATEGORIAS = 'categoriasBookHub';
+const KEY_OFERTAS = 'ofertasBookHub';
+const KEY_PEDIDOS = 'pedidosBookHub';
 const CATALOGO_VERSION = 'v2';
+
+// Categorías iniciales: las distintas que trae el catálogo base.
+const CATEGORIAS_INICIALES = [...new Set(LIBROS_INICIALES.map((l) => l.categoria))];
+
+// Pedidos de ejemplo para que el panel tenga datos desde el primer inicio.
+const PEDIDOS_INICIALES = [
+  {
+    id: 'p-1001',
+    nroOrden: '#20240705',
+    cliente: 'Ana Pérez',
+    correo: 'ana.perez@correo.cl',
+    direccion: 'Los Crisantemos 123',
+    comuna: 'Cerrillos',
+    fecha: '2026-10-10',
+    estado: 'Pagado',
+    total: 16000,
+    items: [
+      { titulo: 'La Metamorfosis', cantidad: 2, precio: 5000 },
+      { titulo: 'El Principito', cantidad: 1, precio: 6000 }
+    ]
+  },
+  {
+    id: 'p-1002',
+    nroOrden: '#20240706',
+    cliente: 'Diego Rojas',
+    correo: 'diego.rojas@correo.cl',
+    direccion: 'Av. Providencia 456',
+    comuna: 'Providencia',
+    fecha: '2026-10-12',
+    estado: 'Enviado',
+    total: 6000,
+    items: [{ titulo: '1984', cantidad: 1, precio: 6000 }]
+  }
+];
 
 // Genera un id único (string) para un libro nuevo.
 export const generarId = () => String(Date.now());
@@ -99,5 +136,136 @@ export const dataService = {
   // WRITE (Carrito)
   guardarCarrito: (carrito) => {
     localStorage.setItem(KEY_CARRITO, JSON.stringify(carrito));
+  },
+
+  // ===================== CATEGORÍAS =====================
+
+  // READ. Siembra las categorías del catálogo base la primera vez.
+  obtenerCategorias: () => {
+    const local = localStorage.getItem(KEY_CATEGORIAS);
+    if (!local) {
+      localStorage.setItem(KEY_CATEGORIAS, JSON.stringify(CATEGORIAS_INICIALES));
+      return CATEGORIAS_INICIALES;
+    }
+    return JSON.parse(local);
+  },
+
+  // WRITE
+  guardarCategorias: (categorias) => {
+    localStorage.setItem(KEY_CATEGORIAS, JSON.stringify(categorias));
+  },
+
+  // CREATE. Evita duplicados (sin importar mayúsculas) y devuelve la lista.
+  crearCategoria: (nombre) => {
+    const limpio = String(nombre).trim();
+    const categorias = dataService.obtenerCategorias();
+
+    if (limpio === '' || categorias.some((c) => c.toLowerCase() === limpio.toLowerCase())) {
+      return categorias;
+    }
+
+    const actualizadas = [...categorias, limpio];
+    dataService.guardarCategorias(actualizadas);
+    return actualizadas;
+  },
+
+  // DELETE
+  eliminarCategoria: (nombre) => {
+    const actualizadas = dataService
+      .obtenerCategorias()
+      .filter((c) => c !== nombre);
+    dataService.guardarCategorias(actualizadas);
+    return actualizadas;
+  },
+
+  // ===================== OFERTAS =====================
+  // Una oferta descuenta un porcentaje (1-99) del precio de un libro.
+
+  // READ
+  obtenerOfertas: () => {
+    const local = localStorage.getItem(KEY_OFERTAS);
+    return local ? JSON.parse(local) : [];
+  },
+
+  // WRITE
+  guardarOfertas: (ofertas) => {
+    localStorage.setItem(KEY_OFERTAS, JSON.stringify(ofertas));
+  },
+
+  // CREATE / UPDATE. Si el libro ya tenía oferta, actualiza su descuento.
+  crearOferta: (libroId, descuento) => {
+    const ofertas = dataService.obtenerOfertas();
+    const existe = ofertas.some((o) => String(o.libroId) === String(libroId));
+
+    const actualizadas = existe
+      ? ofertas.map((o) =>
+          String(o.libroId) === String(libroId)
+            ? { ...o, descuento: Number(descuento) }
+            : o
+        )
+      : [
+          ...ofertas,
+          { id: generarId(), libroId: String(libroId), descuento: Number(descuento) }
+        ];
+
+    dataService.guardarOfertas(actualizadas);
+    return actualizadas;
+  },
+
+  // DELETE
+  eliminarOferta: (id) => {
+    const actualizadas = dataService
+      .obtenerOfertas()
+      .filter((o) => String(o.id) !== String(id));
+    dataService.guardarOfertas(actualizadas);
+    return actualizadas;
+  },
+
+  // ===================== PEDIDOS =====================
+
+  // READ. Siembra pedidos de ejemplo la primera vez.
+  obtenerPedidos: () => {
+    const local = localStorage.getItem(KEY_PEDIDOS);
+    if (!local) {
+      localStorage.setItem(KEY_PEDIDOS, JSON.stringify(PEDIDOS_INICIALES));
+      return PEDIDOS_INICIALES;
+    }
+    return JSON.parse(local);
+  },
+
+  // WRITE
+  guardarPedidos: (pedidos) => {
+    localStorage.setItem(KEY_PEDIDOS, JSON.stringify(pedidos));
+  },
+
+  // CREATE. Registra un pedido nuevo (los más recientes primero).
+  registrarPedido: (pedido) => {
+    const nuevoPedido = {
+      id: pedido.id || generarId(),
+      estado: pedido.estado || 'Pagado',
+      fecha: pedido.fecha || new Date().toISOString().slice(0, 10),
+      ...pedido
+    };
+    const pedidos = [nuevoPedido, ...dataService.obtenerPedidos()];
+    dataService.guardarPedidos(pedidos);
+    return pedidos;
+  },
+
+  // UPDATE. Cambia el estado de un pedido por id.
+  actualizarEstadoPedido: (id, estado) => {
+    const pedidos = dataService
+      .obtenerPedidos()
+      .map((p) => (String(p.id) === String(id) ? { ...p, estado } : p));
+    dataService.guardarPedidos(pedidos);
+    return pedidos;
+  },
+
+  // DELETE
+  eliminarPedido: (id) => {
+    const pedidos = dataService
+      .obtenerPedidos()
+      .filter((p) => String(p.id) !== String(id));
+    dataService.guardarPedidos(pedidos);
+    return pedidos;
   }
 };
