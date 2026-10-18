@@ -34,14 +34,17 @@ src/
 │   ├── organisms/       #   AdminForm, BookGrid, Footer, Header
 │   └── templates/       #   MainLayout
 ├── pages/               # Páginas de la aplicación
-│   ├── Home.jsx         #   Catálogo + búsqueda + paginación
+│   ├── Home.jsx         #   Catálogo + búsqueda + paginación (+ ofertas)
 │   ├── Cart.jsx         #   Carrito de compras
 │   ├── Checkout.jsx     #   Finalización del pedido
 │   ├── Login.jsx        #   Registro / inicio de sesión / perfil
-│   ├── Admin.jsx        #   Panel de administración del inventario
+│   ├── Admin.jsx        #   Layout del panel de administración
+│   ├── admin/           #   Sub-vistas del panel (resumen, productos,
+│   │                    #   categorías, ofertas y pedidos)
 │   └── PaymentSuccess.jsx
 ├── service/
-│   ├── dataService.js   # Persistencia en localStorage (inventario y carrito)
+│   ├── dataService.js   # Persistencia en localStorage (inventario, carrito,
+│   │                    # categorías, ofertas y pedidos)
 │   └── authService.js   # Credenciales y control de acceso del administrador
 ├── styles/              # Estilos personalizados (tema Bootstrap, Header, átomos)
 ├── test/                # Pruebas unitarias (*.spec.jsx) + setupTests.js
@@ -108,9 +111,9 @@ panel muestra un mensaje de "Acceso restringido".
 
 ## ✅ Pruebas unitarias (Jasmine + Karma)
 
-El proyecto cuenta con **44 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
+El proyecto cuenta con **45 casos de prueba** distribuidos en **12 archivos `*.spec.jsx`**,
 que verifican la lógica, el comportamiento y la manipulación del DOM de los componentes
-frontend. Todas las pruebas pasan (`TOTAL: 44 SUCCESS`).
+frontend. Todas las pruebas pasan (`TOTAL: 45 SUCCESS`).
 
 ```bash
 # Ejecutar las pruebas unitarias

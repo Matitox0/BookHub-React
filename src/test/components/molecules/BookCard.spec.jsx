@@ -40,4 +40,18 @@ describe('BookCard Component', () => {
 
     expect(handleAgregar).toHaveBeenCalledWith(libroMock, 3);
   });
+
+  it('muestra el precio con descuento y el badge cuando el libro tiene una oferta', () => {
+    const libroConOferta = {
+      ...libroMock,
+      precio: 9600,
+      precioOriginal: 12000,
+      descuento: 20
+    };
+    render(<BookCard libro={libroConOferta} alAgregarAlCarrito={() => {}} />);
+
+    expect(screen.getByText('-20%')).toBeTruthy();
+    expect(screen.getByText('$12000', { selector: 's' })).toBeTruthy();
+    expect(screen.getByText('$9600')).toBeTruthy();
+  });
 });

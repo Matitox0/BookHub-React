@@ -40,6 +40,8 @@ BookHub es una **aplicación web de una sola página (SPA)** para vender libros.
 - Simular un checkout con datos de despacho y una pantalla de compra exitosa.
 - Registrar usuarios, iniciar y cerrar sesión, y ver un perfil básico.
 - Administrar el inventario (agregar, editar y eliminar libros).
+- Aplicar ofertas sobre el precio de los libros en la tienda.
+- Gestionar el panel de administración (resumen, productos, categorías, ofertas y pedidos).
 - Probar unitariamente los componentes del frontend con Jasmine y Karma.
 
 **Queda fuera de esta entrega:** un backend real con base de datos, autenticación segura, pasarela de pago real y despliegue con dominio propio. Todo el estado se guarda en el navegador (localStorage), lo cual nos sirve para el objetivo de la asignatura pero no para producción.
@@ -97,6 +99,8 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 6. Mostrar una pantalla de confirmación con el número de orden.
 7. Registrarse, iniciar sesión, ver el perfil y cerrar sesión.
 8. Administrar el inventario de libros.
+9. Aplicar **ofertas** (descuentos definidos por el administrador) sobre el precio mostrado en la tienda.
+10. Gestionar el **panel de administración** por secciones: resumen, productos, categorías, ofertas y pedidos.
 
 ### 2.5 Restricciones
 
@@ -138,6 +142,10 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | RF-18 | Editar libro | El administrador selecciona un libro, edita sus datos y guarda los cambios. | Alta |
 | RF-19 | Eliminar libro | El administrador elimina un libro, pidiendo confirmación antes. | Alta |
 | RF-20 | Persistencia | El catálogo, el carrito, la sesión y el perfil se conservan al recargar la página. | Alta |
+| RF-21 | Aplicar ofertas en la tienda | Los libros con oferta muestran el precio original tachado, el descuento y el precio rebajado; al agregarlos al carrito se usa el precio rebajado. | Alta |
+| RF-22 | Gestionar categorías | El administrador crea y elimina categorías (no se puede borrar una con libros asignados). | Media |
+| RF-23 | Gestionar ofertas | El administrador asigna un descuento (1-99%) a un libro y puede quitarlo. | Media |
+| RF-24 | Gestionar pedidos | Cada compra registra un pedido; el administrador ve el historial y cambia su estado. | Media |
 
 ---
 
@@ -166,7 +174,11 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | `/checkout` | Finalizar pedido | Resumen del pedido + formulario de cliente y despacho. |
 | `/pago-exitoso` | Compra exitosa | Confirmación, número de orden y datos de entrega. |
 | `/login` | Acceso / Perfil | Formulario de login, formulario de registro o el perfil si hay sesión. |
-| `/admin` | Administración | Formulario para agregar/editar libros + lista del inventario. |
+| `/admin` | Panel: Resumen | Métricas (libros, categorías, ofertas, pedidos e ingresos) y últimos pedidos. |
+| `/admin/productos` | Panel: Productos | Formulario para agregar/editar libros + inventario con buscador. |
+| `/admin/categorias` | Panel: Categorías | Alta y baja de categorías con el conteo de libros asociados. |
+| `/admin/ofertas` | Panel: Ofertas | Asignar y quitar descuentos por libro, con el precio final calculado. |
+| `/admin/pedidos` | Panel: Pedidos | Historial de pedidos y cambio de estado. |
 
 Todas las pantallas comparten el `MainLayout`, que arma el header con la navegación y el footer.
 
@@ -260,7 +272,7 @@ Esta sección responde a lo que pide la Evaluación Parcial N° 2:
 - **RP-04:** Se deben usar *mocks* (`jasmine.createSpy`) para comprobar las llamadas a callbacks (props como `onClick`, `onChange`, `alAgregarAlCarrito`).
 - **RP-05:** Se debe generar y analizar un reporte de cobertura de código.
 
-El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la cobertura están en el documento **"Cobertura de Testing"** que acompaña a esta entrega. En resumen: 44 casos de prueba sobre los 12 componentes, todos en verde, con 100% de cobertura en los archivos incluidos en el alcance.
+El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la cobertura están en el documento **"Cobertura de Testing"** que acompaña a esta entrega. En resumen: 45 casos de prueba sobre los 12 componentes, todos en verde, con 100% de cobertura en los archivos incluidos en el alcance.
 
 ---
 

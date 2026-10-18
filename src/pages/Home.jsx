@@ -3,13 +3,34 @@ import MainLayout from '../components/templates/MainLayout';
 import SearchForm from '../components/molecules/SearchForm';
 import BookGrid from '../components/organisms/BookGrid';
 import Pagination from '../components/molecules/Pagination';
+import { dataService } from '../service/dataService';
 
 const LIBROS_POR_PAGINA = 6;
+
+// Aplica el descuento de una oferta al libro, conservando el precio original.
+const aplicarOferta = (libro, ofertas) => {
+  const oferta = ofertas.find((o) => String(o.libroId) === String(libro.id));
+  if (!oferta) return libro;
+
+  const precioFinal = Math.round(libro.precio * (1 - oferta.descuento / 100));
+  return {
+    ...libro,
+    precioOriginal: libro.precio,
+    precio: precioFinal,
+    descuento: oferta.descuento
+  };
+};
 
 export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
   const [busqueda, setBusqueda] = useState('');
   const [filtro, setFiltro] = useState('');
   const [pagina, setPagina] = useState(1);
+
+  // Las ofertas se crean en el panel de administración; aquí las leemos para
+  // mostrar el precio rebajado en la tienda.
+  const [ofertas] = useState(() => dataService.obtenerOfertas());
+
+  const librosConOferta = libros.map((libro) => aplicarOferta(libro, ofertas));
 
   const manejarBuscar = (e) => {
     e.preventDefault();
@@ -21,7 +42,7 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
       return;
     }
 
-    const encontrados = libros.filter((libro) => {
+    const encontrados = librosConOferta.filter((libro) => {
       const textoCompleto = `${libro.titulo} ${libro.autor}`.toLowerCase();
       return textoCompleto.includes(texto);
     });
@@ -41,8 +62,8 @@ export default function Home({ libros, alAgregarAlCarrito, usuarioLogueado }) {
   };
 
   const librosVisibles = filtro
-    ? libros.filter((l) => `${l.titulo} ${l.autor}`.toLowerCase().includes(filtro))
-    : libros;
+    ? librosConOferta.filter((l) => `${l.titulo} ${l.autor}`.toLowerCase().includes(filtro))
+    : librosConOferta;
 
   const totalPaginas = Math.max(1, Math.ceil(librosVisibles.length / LIBROS_POR_PAGINA));
   const paginaActual = Math.min(pagina, totalPaginas);

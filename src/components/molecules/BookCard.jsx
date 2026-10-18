@@ -14,10 +14,21 @@ export default function BookCard({ libro, alAgregarAlCarrito }) {
       {libro.imagen && (
         <img src={libro.imagen} className="card-img-top" alt={`Portada de ${libro.titulo}`} />
       )}
+      {libro.descuento ? (
+        <span className="badge bg-danger position-absolute top-0 end-0 m-2">-{libro.descuento}%</span>
+      ) : null}
       <div className="card-body d-flex flex-column">
         <h3 className="card-title h5">{libro.titulo}</h3>
         <p className="card-text mb-1"><strong>Autor:</strong> {libro.autor}</p>
-        <p className="precio card-text"><strong>Precio:</strong> ${libro.precio}</p>
+        {libro.descuento ? (
+          <p className="precio card-text">
+            <strong>Precio:</strong>{' '}
+            <s className="text-muted">${libro.precioOriginal}</s>{' '}
+            <span className="text-danger fw-bold">${libro.precio}</span>
+          </p>
+        ) : (
+          <p className="precio card-text"><strong>Precio:</strong> ${libro.precio}</p>
+        )}
         <div className="mt-auto">
           <QuantySelector
             id={`cant-${libro.id}`}

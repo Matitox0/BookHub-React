@@ -113,7 +113,7 @@ Los **12 componentes** del frontend, cubriendo todos los niveles de Atomic Desig
 
 ### 4.1 Estructura
 
-Cada componente tiene su archivo `*.spec.jsx` con un `describe('NombreComponente Component', ...)` y varios `it(...)`. En total son **44 casos de prueba**.
+Cada componente tiene su archivo `*.spec.jsx` con un `describe('NombreComponente Component', ...)` y varios `it(...)`. En total son **45 casos de prueba**.
 
 ### 4.2 Técnicas aplicadas
 
@@ -147,7 +147,7 @@ Aquí se comprueba la lógica (que se convierta la cantidad a número), el compo
 |---|---|---|
 | `Button` | `atoms/Button.spec.jsx` | 3 |
 | `Input` | `atoms/Input.spec.jsx` | 3 |
-| `BookCard` | `molecules/BookCard.spec.jsx` | 3 |
+| `BookCard` | `molecules/BookCard.spec.jsx` | 4 |
 | `FormField` | `molecules/FormField.spec.jsx` | 3 |
 | `Pagination` | `molecules/Pagination.spec.jsx` | 7 |
 | `QuantySelector` | `molecules/QuantySelector.spec.jsx` | 3 |
@@ -157,11 +157,11 @@ Aquí se comprueba la lógica (que se convierta la cantidad a número), el compo
 | `Footer` | `organisms/Footer.spec.jsx` | 3 |
 | `Header` | `organisms/Header.spec.jsx` | 5 |
 | `MainLayout` | `templates/MainLayout.spec.jsx` | 3 |
-| **Total** | **12 archivos** | **44** |
+| **Total** | **12 archivos** | **45** |
 
 Algunos casos que vale la pena destacar:
 
-- `BookCard`: verifica que la imagen **no** se renderiza cuando el libro no tiene `imagen`.
+- `BookCard`: verifica que la imagen **no** se renderiza cuando el libro no tiene `imagen`, y que cuando el libro tiene una **oferta** se muestra el badge con el descuento, el precio original tachado y el precio rebajado.
 - `Pagination`: prueba que no se renderiza nada con una sola página y que los botones "Anterior"/"Siguiente" se deshabilitan en los extremos.
 - `Header`: prueba el cambio de "Acceder / Registrarse" a "Mi Perfil" según `usuarioLogueado`, el despliegue del menú colapsable y que el enlace "Administrador" solo aparezca con la sesión del administrador.
 - `AdminForm`: prueba el render en modo "Agregar" vs. "Editar" y que los setters reciban lo que se escribe.
@@ -173,16 +173,16 @@ Algunos casos que vale la pena destacar:
 ### 6.1 Ejecución
 
 ```
-TOTAL: 44 SUCCESS
+TOTAL: 45 SUCCESS
 ```
 
-Las **44 pruebas pasan** en ChromeHeadless.
+Las **45 pruebas pasan** en ChromeHeadless.
 
 ### 6.2 Resumen de cobertura
 
 ```
 Statements   : 100% ( 35/35 )
-Branches     : 100% ( 29/29 )
+Branches     : 100% ( 33/33 )
 Functions    : 100% ( 24/24 )
 Lines        : 100% ( 34/34 )
 ```
@@ -193,7 +193,7 @@ Lines        : 100% ( 34/34 )
 |---|---|---|---|---|
 | `atoms/Button.jsx` | 100% (1/1) | 100% (2/2) | 100% (1/1) | 100% (1/1) |
 | `atoms/Input.jsx` | 100% (1/1) | 100% (3/3) | 100% (1/1) | 100% (1/1) |
-| `molecules/BookCard.jsx` | 100% (6/6) | 100% (2/2) | 100% (3/3) | 100% (6/6) |
+| `molecules/BookCard.jsx` | 100% (6/6) | 100% (6/6) | 100% (3/3) | 100% (6/6) |
 | `molecules/FormField.jsx` | 100% (1/1) | 100% (2/2) | 100% (1/1) | 100% (1/1) |
 | `molecules/Pagination.jsx` | 100% (11/11) | 100% (8/8) | 100% (5/5) | 100% (10/10) |
 | `molecules/QuantySelector.jsx` | 100% (1/1) | — | 100% (1/1) | 100% (1/1) |
@@ -211,7 +211,7 @@ Lines        : 100% ( 34/34 )
 ## 7. Análisis de resultados
 
 - La cobertura de los componentes es **completa**: cada línea, función y rama condicional de los archivos del alcance fue ejecutada al menos una vez.
-- Las ramas más importantes que quedan cubiertas son las condicionales de la interfaz: mostrar u ocultar la imagen en `BookCard`, el modo "Agregar/Editar" en `AdminForm`, el estado activo/deshabilitado de la paginación y el despliegue del menú en `Header`.
+- Las ramas más importantes que quedan cubiertas son las condicionales de la interfaz: mostrar u ocultar la imagen y el bloque de oferta en `BookCard`, el modo "Agregar/Editar" en `AdminForm`, el estado activo/deshabilitado de la paginación y el despliegue del menú en `Header`.
 - El uso de mocks nos permitió comprobar los callbacks sin depender del resto de la aplicación (por ejemplo, no necesitamos la página `Home` para probar `SearchForm`).
 - El 100% **no significa** que la aplicación esté libre de errores: significa que, para los componentes del alcance, ninguna línea quedó sin ser ejercitada por una prueba. Las páginas y la integración quedan fuera y se validaron manualmente.
 
@@ -219,7 +219,7 @@ Lines        : 100% ( 34/34 )
 
 ## 8. Conclusiones
 
-El proceso de testing quedó completo para lo que pedía la evaluación: entorno configurado (Karma + Jasmine + webpack + Istanbul), 43 pruebas unitarias bien estructuradas, uso de mocks, análisis de resultados y un reporte de cobertura real y reproducible con `npm test`.
+El proceso de testing quedó completo para lo que pedía la evaluación: entorno configurado (Karma + Jasmine + webpack + Istanbul), 45 pruebas unitarias bien estructuradas, uso de mocks, análisis de resultados y un reporte de cobertura real y reproducible con `npm test`.
 
 Lo que mejoraríamos en una siguiente etapa:
 
