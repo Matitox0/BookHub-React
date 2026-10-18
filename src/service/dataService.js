@@ -29,7 +29,9 @@ const CATALOGO_VERSION = 'v2';
 export const generarId = () => String(Date.now());
 
 export const dataService = {
-  // READ (Inventario). Si no existe o cambió la versión, siembra el catálogo inicial.
+  // ===================== INVENTARIO (Libros) =====================
+
+  // READ (todos). Si no existe o cambió la versión, siembra el catálogo inicial.
   obtenerLibros: () => {
     const local = localStorage.getItem(KEY_LIBROS);
     const version = localStorage.getItem(KEY_VERSION);
@@ -42,10 +44,51 @@ export const dataService = {
     return JSON.parse(local);
   },
 
-  // WRITE (Inventario)
+  // READ (uno). Devuelve el libro con ese id o null si no existe.
+  obtenerLibroPorId: (id) => {
+    const libro = dataService
+      .obtenerLibros()
+      .find((l) => String(l.id) === String(id));
+    return libro || null;
+  },
+
+  // WRITE. Persiste la lista completa de libros.
   guardarLibros: (libros) => {
     localStorage.setItem(KEY_LIBROS, JSON.stringify(libros));
   },
+
+  // CREATE. Agrega un libro (genera id si no viene) y devuelve la lista actualizada.
+  crearLibro: (datos) => {
+    const nuevoLibro = {
+      ...datos,
+      id: datos.id ? String(datos.id) : generarId()
+    };
+    const libros = [...dataService.obtenerLibros(), nuevoLibro];
+    dataService.guardarLibros(libros);
+    return libros;
+  },
+
+  // UPDATE. Modifica un libro por id y devuelve la lista actualizada.
+  actualizarLibro: (id, cambios) => {
+    const libros = dataService.obtenerLibros().map((libro) =>
+      String(libro.id) === String(id)
+        ? { ...libro, ...cambios, id: libro.id }
+        : libro
+    );
+    dataService.guardarLibros(libros);
+    return libros;
+  },
+
+  // DELETE. Quita un libro por id y devuelve la lista actualizada.
+  eliminarLibro: (id) => {
+    const libros = dataService
+      .obtenerLibros()
+      .filter((libro) => String(libro.id) !== String(id));
+    dataService.guardarLibros(libros);
+    return libros;
+  },
+
+  // ===================== CARRITO =====================
 
   // READ (Carrito)
   obtenerCarrito: () => {

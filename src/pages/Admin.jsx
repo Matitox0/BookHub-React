@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 import AdminForm from '../components/organisms/AdminForm';
-import { generarId } from '../service/dataService';
+import { dataService } from '../service/dataService';
 import { esAdmin } from '../service/authService';
 
 export default function Admin({ libros, setLibros, usuarioLogueado }) {
@@ -15,21 +15,18 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
     e.preventDefault();
 
     if (libroId === '') {
-      const nuevoLibro = {
-        id: generarId(),
-        titulo,
-        autor,
-        precio: parseFloat(precio)
-      };
-      setLibros([...libros, nuevoLibro]);
+      setLibros(
+        dataService.crearLibro({ titulo, autor, precio: parseFloat(precio) })
+      );
       alert('Libro agregado exitosamente.');
     } else {
-      const inventarioActualizado = libros.map((libro) =>
-        libro.id === libroId
-          ? { ...libro, titulo, autor, precio: parseFloat(precio) }
-          : libro
+      setLibros(
+        dataService.actualizarLibro(libroId, {
+          titulo,
+          autor,
+          precio: parseFloat(precio)
+        })
       );
-      setLibros(inventarioActualizado);
       alert('Libro editado exitosamente.');
     }
 
@@ -45,7 +42,7 @@ export default function Admin({ libros, setLibros, usuarioLogueado }) {
 
   const eliminarLibro = (id) => {
     if (confirm('¿Estás seguro de eliminar este libro?')) {
-      setLibros(libros.filter((libro) => libro.id !== id));
+      setLibros(dataService.eliminarLibro(id));
     }
   };
 
