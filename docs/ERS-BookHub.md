@@ -17,7 +17,7 @@
 |---|---|
 | 1.0 | ERS inicial con el planteamiento del catálogo y el carrito de compras (Evaluación Parcial 1). |
 | 1.1 | Se agregó el módulo de sesión (registro / login / perfil) y el panel de administración. |
-| 2.0 | Se reescribe el frontend sobre React, se reorganiza en componentes, se incorpora Bootstrap para lo responsivo y se agrega el plan de pruebas unitarias. |
+| 2.0 | Se reescribe el frontend sobre React, se reorganiza en componentes, se incorpora Bootstrap para lo responsivo y se agrega el plan de pruebas unitarias. Se suman las vistas de la tienda (Categorías y Ofertas), el panel de administración por secciones (resumen, productos, categorías, ofertas y pedidos), las ofertas aplicadas al precio y la vista de pago rechazado. |
 
 ---
 
@@ -53,6 +53,9 @@ BookHub es una **aplicación web de una sola página (SPA)** para vender libros.
 - **Carrito:** la lista de libros seleccionados con su cantidad (`carritoBookHub`).
 - **Sesión:** el correo del usuario que tiene sesión activa (`sesionActivaBookHub`).
 - **Perfil:** los datos guardados del usuario registrado (`perfilBookHub`): nombre, correo, género literario y contraseña.
+- **Categoría:** agrupación de libros (`categoriasBookHub`).
+- **Oferta:** descuento (en %) asociado a un libro (`ofertasBookHub`).
+- **Pedido:** registro de una compra realizada (`pedidosBookHub`).
 - **Administrador:** cuenta con permisos para gestionar el inventario (`admin@bookhub.cl`).
 - **Componente:** unidad reutilizable del frontend (siguiendo *Atomic Design*: átomos, moléculas, organismos y plantillas).
 
@@ -77,7 +80,7 @@ Los componentes están organizados con **Atomic Design**:
 - **organismos:** `AdminForm`, `BookGrid`, `Footer`, `Header`.
 - **plantillas:** `MainLayout` (header + contenido + footer).
 
-El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App.jsx` con `useState` y se comparte hacia abajo por *props*. La persistencia la resuelve `src/service/dataService.js`, que lee y escribe en `localStorage`. El control de acceso del administrador vive en `src/service/authService.js`.
+El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App.jsx` con `useState` y se comparte hacia abajo por *props*. La persistencia la resuelve `src/service/dataService.js`, que lee y escribe en `localStorage` (inventario, carrito, categorías, ofertas y pedidos). El cálculo del precio con descuento vive en `src/service/ofertaService.js`, y el control de acceso del administrador en `src/service/authService.js`.
 
 ### 2.3 Usuarios
 
@@ -190,7 +193,7 @@ Todas las pantallas comparten el `MainLayout`, que arma el header con la navegac
 
 - **React 19** y **React Router 7** para la interfaz y la navegación.
 - **Bootstrap 5**, importado desde `main.jsx`, como base de estilos.
-- **API de `localStorage`** del navegador como almacenamiento (claves: `inventarioBookHub`, `carritoBookHub`, `sesionActivaBookHub`, `perfilBookHub`, `catalogoVersion`).
+- **API de `localStorage`** del navegador como almacenamiento (claves: `inventarioBookHub`, `carritoBookHub`, `categoriasBookHub`, `ofertasBookHub`, `pedidosBookHub`, `sesionActivaBookHub`, `perfilBookHub`, `catalogoVersion`).
 - **Jasmine + Karma + Testing Library** para las pruebas.
 
 ### 5.3 Interfaces de hardware y comunicación
@@ -225,12 +228,35 @@ Es un libro más un campo `cantidad` (number).
 | `genero` | string |
 | `clave` | string |
 
+### Oferta
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | string | Identificador de la oferta. |
+| `libroId` | string | Id del libro al que aplica. |
+| `descuento` | number | Porcentaje de descuento (entre 1 y 99). |
+
+### Pedido
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | string | Identificador del pedido. |
+| `nroOrden` | string | Número de orden mostrado al cliente. |
+| `cliente`, `correo`, `direccion`, `comuna` | string | Datos del cliente y del despacho. |
+| `fecha` | string | Fecha del pedido (formato `YYYY-MM-DD`). |
+| `estado` | string | Pendiente, Pagado, Enviado, Entregado o Cancelado. |
+| `items` | array | Productos comprados (`titulo`, `cantidad`, `precio`). |
+| `total` | number | Total del pedido. |
+
 ### Almacenamiento en localStorage
 
 | Clave | Contenido |
 |---|---|
 | `inventarioBookHub` | Lista de libros (JSON). |
 | `carritoBookHub` | Lista de ítems del carrito (JSON). |
+| `categoriasBookHub` | Lista de categorías (JSON). |
+| `ofertasBookHub` | Lista de ofertas vigentes (JSON). |
+| `pedidosBookHub` | Lista de pedidos registrados (JSON). |
 | `sesionActivaBookHub` | Correo del usuario con sesión activa. |
 | `perfilBookHub` | Datos del usuario registrado (JSON). |
 | `catalogoVersion` | Marca de versión del catálogo (`v2`). Si no coincide, se vuelve a sembrar el catálogo inicial. |
@@ -248,7 +274,7 @@ Es un libro más un campo `cantidad` (number).
 3. Elige la cantidad en la tarjeta y pulsa "Agregar al carrito".
 4. Va a `/cart`, revisa subtotales y total; puede eliminar ítems.
 5. Pulsa "Finalizar Compra" y completa los datos en `/checkout`.
-6. Al pagar, el carrito se vacía y se muestra `/pago-exitoso` con el resumen.
+6. Al pagar, el carrito se vacía y se muestra `/pago-exitoso` con el resumen. Si los datos de la tarjeta son inválidos, el pago se rechaza, **el carrito se conserva** y se muestra `/pago-fallido` con el motivo.
 
 ### 7.2 Registrarse e iniciar sesión
 
@@ -257,12 +283,14 @@ Es un libro más un campo `cantidad` (number).
 3. Vuelve al login e ingresa con su correo y contraseña.
 4. El header pasa a mostrar "Mi Perfil" y el usuario ve sus datos.
 
-### 7.3 Administrar el inventario
+### 7.3 Administrar la tienda desde el panel
 
 1. El administrador inicia sesión con su cuenta en `/login` y entra a `/admin` (si no hay sesión, lo manda al login; si la sesión es de un cliente, ve "Acceso restringido").
-2. Completa el formulario para agregar un libro, o pulsa "Editar" en uno existente.
-3. Puede eliminar un libro (con confirmación).
-4. Los cambios se guardan en `localStorage` y se reflejan en el catálogo.
+2. En **Resumen** ve las métricas (libros, categorías, ofertas, pedidos e ingresos).
+3. En **Productos** agrega un libro, o pulsa "Editar" en uno existente, y puede eliminar (con confirmación).
+4. En **Categorías** crea y elimina categorías; en **Ofertas** asigna o quita un descuento a un libro.
+5. En **Pedidos** revisa el historial y cambia el estado de cada pedido.
+6. Los cambios se guardan en `localStorage` y se reflejan en la tienda (catálogo y precios con oferta).
 
 ---
 
@@ -290,6 +318,8 @@ El detalle de cómo quedaron estas pruebas, los resultados y el alcance de la co
 | RF-17, RF-18, RF-19 | `AdminForm` | `AdminForm.spec.jsx` |
 | RF-16 (control de acceso) | `Header` (enlace solo para admin) | `Header.spec.jsx` |
 | RF-12, RF-13, RF-14 | `FormField`, `Button`, `Input` | `FormField.spec.jsx`, `Button.spec.jsx`, `Input.spec.jsx` |
+| RF-21, RF-23 | `BookCard` (precio con oferta) y `ofertaService` | `BookCard.spec.jsx` (+ validación manual del flujo de ofertas) |
+| RF-22, RF-24, RF-25 | Páginas `pages/admin/*`, `Checkout`, `PaymentFailure` | Validación manual (fuera del alcance unitario) |
 | Navegación general | `Header`, `Footer`, `MainLayout` | `Header.spec.jsx`, `Footer.spec.jsx`, `MainLayout.spec.jsx` |
 
 ---

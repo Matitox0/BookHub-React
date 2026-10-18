@@ -99,8 +99,9 @@ Los **12 componentes** del frontend, cubriendo todos los niveles de Atomic Desig
 
 | Elemento | Motivo |
 |---|---|
-| Páginas (`Home`, `Cart`, `Checkout`, `Login`, `Admin`, `PaymentSuccess`) | La evaluación pide pruebas de **componentes** frontend. Las páginas se validaron de forma manual (flujo completo en el navegador). |
+| Páginas (`Home`, `Categorias`, `Ofertas`, `Cart`, `Checkout`, `PaymentSuccess`, `PaymentFailure`, `Login`, `Admin` y las sub-vistas de `pages/admin/`) | La evaluación pide pruebas de **componentes** frontend. Las páginas se validaron de forma manual (flujo completo en el navegador). |
 | `dataService.js` | Depende de `localStorage`; se validó manualmente. Se podría cubrir con un mock de `localStorage` en una siguiente etapa. |
+| `ofertaService.js` | Cálculo del precio con descuento; se validó manualmente a través del flujo de ofertas (panel → tienda). |
 | `authService.js` | Contiene las credenciales del administrador; se excluye del reporte por ser configuración, aunque su lógica se ejercita indirectamente desde `Header.spec.jsx`. |
 | `App.jsx` | Es el pegamento entre páginas y estado; se prueba indirectamente al usar el sistema. |
 | Pruebas end-to-end e integración | No son parte de esta entrega (aquí van pruebas unitarias). |

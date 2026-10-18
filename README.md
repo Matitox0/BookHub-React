@@ -39,13 +39,12 @@ src/
 │   ├── Ofertas.jsx      #   Productos con oferta vigente
 │   ├── Cart.jsx         #   Carrito de compras
 │   ├── Checkout.jsx     #   Finalización del pedido (+ datos de pago)
-│   ├── PaymentSuccess.jsx
+│   ├── PaymentSuccess.jsx  #  Compra exitosa
 │   ├── PaymentFailure.jsx  #  Pago rechazado
 │   ├── Login.jsx        #   Registro / inicio de sesión / perfil
 │   ├── Admin.jsx        #   Layout del panel de administración
-│   ├── admin/           #   Sub-vistas del panel (resumen, productos,
-│   │                    #   categorías, ofertas y pedidos)
-│   └── ...
+│   └── admin/           #   Sub-vistas del panel (resumen, productos,
+│                        #   categorías, ofertas y pedidos)
 ├── service/
 │   ├── dataService.js   # Persistencia en localStorage (inventario, carrito,
 │   │                    # categorías, ofertas y pedidos)
