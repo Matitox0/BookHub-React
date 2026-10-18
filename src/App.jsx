@@ -8,6 +8,7 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailure from './pages/PaymentFailure';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminCategories from './pages/admin/AdminCategories';
@@ -114,6 +115,10 @@ export default function App() {
         <Route
           path="/pago-exitoso"
           element={<PaymentSuccess usuarioLogueado={usuarioLogueado} />}
+        />
+        <Route
+          path="/pago-fallido"
+          element={<PaymentFailure usuarioLogueado={usuarioLogueado} />}
         />
         <Route
           path="/admin"

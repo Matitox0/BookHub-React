@@ -146,6 +146,7 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | RF-22 | Gestionar categorías | El administrador crea y elimina categorías (no se puede borrar una con libros asignados). | Media |
 | RF-23 | Gestionar ofertas | El administrador asigna un descuento (1-99%) a un libro y puede quitarlo. | Media |
 | RF-24 | Gestionar pedidos | Cada compra registra un pedido; el administrador ve el historial y cambia su estado. | Media |
+| RF-25 | Rechazo de pago | Si los datos de la tarjeta son inválidos, el pago se rechaza, el carrito se conserva y se muestra la vista `/pago-fallido` con el motivo. | Media |
 
 ---
 
@@ -173,8 +174,9 @@ El estado "vivo" de la aplicación (libros, carrito y sesión) se maneja en `App
 | `/categorias` | Categorías | Botones por categoría (con conteo de libros) y grilla filtrada por la categoría elegida. |
 | `/ofertas` | Ofertas | Grilla con los libros que tienen una oferta vigente. |
 | `/cart` | Carrito | Tabla de ítems, total, botones "Vaciar" y "Finalizar Compra". |
-| `/checkout` | Finalizar pedido | Resumen del pedido + formulario de cliente y despacho. |
+| `/checkout` | Finalizar pedido | Resumen del pedido + formulario de cliente, despacho y datos de pago. |
 | `/pago-exitoso` | Compra exitosa | Confirmación, número de orden y datos de entrega. |
+| `/pago-fallido` | Pago rechazado | Se muestra cuando la pasarela simulada rechaza el pago; incluye el motivo del rechazo y opciones para reintentar. |
 | `/login` | Acceso / Perfil | Formulario de login, formulario de registro o el perfil si hay sesión. |
 | `/admin` | Panel: Resumen | Métricas (libros, categorías, ofertas, pedidos e ingresos) y últimos pedidos. |
 | `/admin/productos` | Panel: Productos | Formulario para agregar/editar libros + inventario con buscador. |

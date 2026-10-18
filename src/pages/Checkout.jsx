@@ -3,17 +3,43 @@ import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/templates/MainLayout';
 import { dataService } from '../service/dataService';
 
+// Simulación de la pasarela: valida la tarjeta y devuelve un mensaje de error
+// (o null si los datos están correctos).
+const validarTarjeta = ({ numero, titular, vencimiento, cvv }) => {
+  if (!/^\d{16}$/.test(numero.replace(/\s/g, ''))) {
+    return 'El número de tarjeta debe tener 16 dígitos.';
+  }
+  if (titular.trim() === '') {
+    return 'Ingresa el nombre del titular de la tarjeta.';
+  }
+  if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(vencimiento)) {
+    return 'La fecha de vencimiento debe tener el formato MM/AA.';
+  }
+  if (!/^\d{3}$/.test(cvv)) {
+    return 'El código CVV debe tener 3 dígitos.';
+  }
+  return null;
+};
+
 export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
   const navigate = useNavigate();
   const total = carrito.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
 
+  // Datos del cliente y despacho
   const [nombre, setNombre] = useState('');
   const [correo, setCorreo] = useState(usuarioLogueado || '');
   const [direccion, setDireccion] = useState('');
   const [comuna, setComuna] = useState('Cerrillos');
 
+  // Datos de pago (simulados)
+  const [numero, setNumero] = useState('');
+  const [titular, setTitular] = useState('');
+  const [vencimiento, setVencimiento] = useState('');
+  const [cvv, setCvv] = useState('');
+
   const manejarPago = (e) => {
     e.preventDefault();
+
     if (carrito.length === 0) {
       alert('El carrito está vacío.');
       return;
@@ -21,15 +47,19 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
 
     // Simulación de respuesta de pasarela
     const orden = '#20240705';
+    const datosBase = { nroOrden: orden, cliente: nombre, correo, direccion, comuna, total };
 
-    // Se registra el pedido para que quede disponible en el panel de administración.
+    // Si la tarjeta no es válida, el pago se rechaza y se muestra la vista de error.
+    const motivo = validarTarjeta({ numero, titular, vencimiento, cvv });
+
+    if (motivo) {
+      navigate('/pago-fallido', { state: { ...datosBase, motivo } });
+      return;
+    }
+
+    // Pago aprobado: se registra el pedido y se vacía el carrito.
     dataService.registrarPedido({
-      nroOrden: orden,
-      cliente: nombre,
-      correo,
-      direccion,
-      comuna,
-      total,
+      ...datosBase,
       items: carrito.map((item) => ({
         titulo: item.titulo,
         cantidad: item.cantidad,
@@ -39,7 +69,7 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
 
     setCarrito([]);
     localStorage.removeItem('carritoBookHub');
-    navigate('/pago-exitoso', { state: { nroOrden: orden, cliente: nombre, total, direccion, comuna, correo } });
+    navigate('/pago-exitoso', { state: datosBase });
   };
 
   return (
@@ -47,57 +77,90 @@ export default function Checkout({ carrito, setCarrito, usuarioLogueado }) {
       <main className="container my-5">
         <div className="row justify-content-center">
           <div className="col-12 col-lg-9">
-        <h2 className="mb-4">Carrito de compra - Finalizar Pedido</h2>
-        
-        <div className="card mb-4 shadow-sm">
-          <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 className="mb-0">Resumen de Productos</h5>
-            <span className="badge bg-light text-dark fs-6">Total a pagar: ${total}</span>
-          </div>
-          <div className="card-body">
-            <ul className="list-group list-group-flush mb-3">
-              {carrito.map(item => (
-                <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>{item.titulo}</strong>
-                    <div className="small text-muted">{item.autor} - Cantidad: {item.cantidad}</div>
-                  </div>
-                  <span className="fw-bold">${item.precio * item.cantidad}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+            <h2 className="mb-4">Carrito de compra - Finalizar Pedido</h2>
 
-        <form onSubmit={manejarPago} className="card p-4 shadow-sm bg-light">
-          <h4 className="mb-3">Información del cliente y despacho</h4>
-          <div className="row g-3">
-            <div className="col-md-6">
-              <label className="form-label">Nombre Completo *</label>
-              <input type="text" className="form-control" value={nombre} onChange={e => setNombre(e.target.value)} required />
+            <div className="card mb-4 shadow-sm">
+              <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">Resumen de Productos</h5>
+                <span className="badge bg-light text-dark fs-6">Total a pagar: ${total}</span>
+              </div>
+              <div className="card-body">
+                <ul className="list-group list-group-flush mb-3">
+                  {carrito.map((item) => (
+                    <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{item.titulo}</strong>
+                        <div className="small text-muted">{item.autor} - Cantidad: {item.cantidad}</div>
+                      </div>
+                      <span className="fw-bold">${item.precio * item.cantidad}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="col-md-6">
-              <label className="form-label">Correo Electrónico *</label>
-              <input type="email" className="form-control" value={correo} onChange={e => setCorreo(e.target.value)} required />
-            </div>
-            <div className="col-12">
-              <label className="form-label">Calle y Número *</label>
-              <input type="text" className="form-control" placeholder="Ej: Los Crisantemos 123" value={direccion} onChange={e => setDireccion(e.target.value)} required />
-            </div>
-            <div className="col-md-6">
-              <label className="form-label">Comuna *</label>
-              <select className="form-select" value={comuna} onChange={e => setComuna(e.target.value)}>
-                <option value="Cerrillos">Cerrillos</option>
-                <option value="Santiago">Santiago</option>
-                <option value="Maipú">Maipú</option>
-                <option value="Providencia">Providencia</option>
-              </select>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-success btn-lg mt-4 w-100 fw-bold">
-            Pagar ahora ${total}
-          </button>
-        </form>
+
+            <form onSubmit={manejarPago} className="card p-4 shadow-sm bg-light">
+              <h4 className="mb-3">Información del cliente y despacho</h4>
+              <div className="row g-3">
+                <div className="col-md-6">
+                  <label className="form-label">Nombre Completo *</label>
+                  <input type="text" className="form-control" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Correo Electrónico *</label>
+                  <input type="email" className="form-control" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
+                </div>
+                <div className="col-12">
+                  <label className="form-label">Calle y Número *</label>
+                  <input type="text" className="form-control" placeholder="Ej: Los Crisantemos 123" value={direccion} onChange={(e) => setDireccion(e.target.value)} required />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Comuna *</label>
+                  <select className="form-select" value={comuna} onChange={(e) => setComuna(e.target.value)}>
+                    <option value="Cerrillos">Cerrillos</option>
+                    <option value="Santiago">Santiago</option>
+                    <option value="Maipú">Maipú</option>
+                    <option value="Providencia">Providencia</option>
+                  </select>
+                </div>
+              </div>
+
+              <hr className="my-4" />
+
+              <h4 className="mb-3">Datos de pago</h4>
+              <div className="row g-3">
+                <div className="col-12">
+                  <label className="form-label">Número de tarjeta *</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="16 dígitos"
+                    inputMode="numeric"
+                    value={numero}
+                    onChange={(e) => setNumero(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Titular de la tarjeta *</label>
+                  <input type="text" className="form-control" value={titular} onChange={(e) => setTitular(e.target.value)} />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">Vencimiento (MM/AA) *</label>
+                  <input type="text" className="form-control" placeholder="12/28" value={vencimiento} onChange={(e) => setVencimiento(e.target.value)} />
+                </div>
+                <div className="col-md-3">
+                  <label className="form-label">CVV *</label>
+                  <input type="text" className="form-control" placeholder="123" inputMode="numeric" value={cvv} onChange={(e) => setCvv(e.target.value)} />
+                </div>
+              </div>
+
+              <button type="submit" className="btn btn-success btn-lg mt-4 w-100 fw-bold">
+                Pagar ahora ${total}
+              </button>
+              <p className="text-muted small text-center mb-0 mt-2">
+                Pago simulado: si los datos de la tarjeta están incompletos, el pago se rechazará.
+              </p>
+            </form>
           </div>
         </div>
       </main>
