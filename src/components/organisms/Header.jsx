@@ -23,6 +23,8 @@ export default function Header({ usuarioLogueado }) {
         <div className={abierto ? 'collapse navbar-collapse show' : 'collapse navbar-collapse'}>
           <nav className="navbar-nav ms-auto">
             <Link to="/" className="nav-link">Inicio</Link>
+            <Link to="/categorias" className="nav-link">Categorías</Link>
+            <Link to="/ofertas" className="nav-link">Ofertas</Link>
             <Link to="/cart" className="nav-link">Carrito de Compras</Link>
             {esAdmin(usuarioLogueado) && (
               <Link to="/admin" className="nav-link">Administrador</Link>
