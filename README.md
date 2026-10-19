@@ -1,5 +1,7 @@
 # BookHub — Tienda online de libros
 
+🔗 **Repositorio:** https://github.com/Matitox0/BookHub-React
+
 Proyecto frontend desarrollado con **React** para la asignatura **DSY1104 — Desarrollo Fullstack II**
 (Evaluación Parcial N° 2: *Implementando frontend y pruebas unitarias a mi tienda online*).
 
