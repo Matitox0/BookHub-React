@@ -2,7 +2,6 @@
 .home-contenido-encuadrado h1 {
   color: #000;
 }
- 
 /* tema oscuro: ajusta el selector a como lo manejes */
 body.dark .home-contenido-encuadrado h1,
 [data-theme="dark"] .home-contenido-encuadrado h1 {
